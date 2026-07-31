@@ -79,6 +79,13 @@ from core.fea.lsdyna.parser.control_solution_parser import ControlSolutionParser
 from core.fea.lsdyna.parser.control_timestep_parser import ControlTimestepParser
 from core.fea.lsdyna.parser.database_sbtout_parser import DatabaseSbtoutParser
 from core.fea.lsdyna.parser.control_contact_parser import ControlContactParser
+from core.fea.lsdyna.parser.database_binary_d3plot_parser import DatabaseBinaryD3plotParser
+from core.fea.lsdyna.parser.control_energy_parser import ControlEnergyParser
+from core.fea.lsdyna.parser.database_secforc_parser import DatabaseSecforcParser
+from core.fea.lsdyna.parser.database_glstat_parser import DatabaseGlstatParser
+from core.fea.lsdyna.parser.database_dcfail_parser import DatabaseDcfailParser
+from core.fea.lsdyna.parser.control_accuracy_parser import ControlAccuracyParser
+from core.fea.lsdyna.parser.control_termination_parser import ControlTerminationParser
 from core.fea.lsdyna.parser.end_parser import EndParser
 
 
@@ -144,6 +151,13 @@ class LsDyna(Solver):
             "*CONTROL_TIMESTEP": ControlTimestepParser(),
             "*DATABASE_SBTOUT": DatabaseSbtoutParser(),
             "*CONTROL_CONTACT": ControlContactParser(),
+            "*DATABASE_BINARY_D3PLOT": DatabaseBinaryD3plotParser(),
+            "*CONTROL_ENERGY": ControlEnergyParser(),
+            "*DATABASE_SECFORC": DatabaseSecforcParser(),
+            "*DATABASE_GLSTAT": DatabaseGlstatParser(),
+            "*DATABASE_DCFAIL": DatabaseDcfailParser(),
+            "*CONTROL_ACCURACY": ControlAccuracyParser(),
+            "*CONTROL_TERMINATION": ControlTerminationParser(),
             "*END": EndParser(),
         }
 
