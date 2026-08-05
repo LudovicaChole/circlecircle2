@@ -49,7 +49,7 @@ class DatabaseNodoutParser(Parser):
         else:
             binhf = 0
 
-        uid = len(self.dataframe.database_matsum) + 1
+        uid = len(self.dataframe.database_nodout) + 1
 
         self.dataframe.database_nodout[uid] = DatabaseNodout(uid=uid,
                                                              dt=dt,

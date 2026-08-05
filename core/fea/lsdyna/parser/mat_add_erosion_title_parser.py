@@ -229,7 +229,7 @@ class MatAddErosionTitleParser(Parser):
                 lcsdg = 0.0
 
             if len(ecrit_raw) > 0:
-                ecrit = self.dataframe.parameter[ecrit_raw[1:]].value if ecrit_raw.startswith("&") else int(ecrit_raw)
+                ecrit = self.dataframe.parameter[ecrit_raw[1:]].value if ecrit_raw.startswith("&") else float(ecrit_raw)
             else:
                 ecrit = 0.0
 
