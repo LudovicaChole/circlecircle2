@@ -38,6 +38,10 @@ class C2MenuBar(QMenuBar):
             "Save as"
         )
 
+        self.export_action = file_menu.addAction(
+            "Export"
+        )
+
         self.set_work_directory_action = file_menu.addAction(
             "Set Work Directory"
         )

@@ -183,21 +183,21 @@ class FeaKeywordsTranslator:
 fea_keywords_translator = FeaKeywordsTranslator()
 
 
-if __name__ == '__main__':
-    file_path = r"E:\PythonProject\circlecircle2\Test_Items\test_model.k"
-    material_mapping_file_path = r"E:\PythonProject\circlecircle2\Test_Items\material_mapping.json"
-    # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_model.inp"
-    # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_.pc"
-
-    fea_keywords_translator.translate(file_path=file_path,
-                                      solver1="lsdyna",
-                                      version1="12.0",
-                                      solver2="abaqus",
-                                      version2="6.14",
-                                      material_mapping=True,
-                                      material_mapping_file_path=material_mapping_file_path)
-
-    d = fea_keywords_translator.dataframe
+# if __name__ == '__main__':
+#     file_path = r"E:\PythonProject\test_hwx\test_model.k"
+#     material_mapping_file_path = r"E:\PythonProject\test_hwx\material_mapping.json"
+#     # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_model.inp"
+#     # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_.pc"
+#
+#     fea_keywords_translator.translate(file_path=file_path,
+#                                       solver1="lsdyna",
+#                                       version1="12.0",
+#                                       solver2="abaqus",
+#                                       version2="6.14",
+#                                       material_mapping=True,
+#                                       material_mapping_file_path=material_mapping_file_path)
+#
+#     d = fea_keywords_translator.dataframe
     # print(d.define_curve)
     # print(d.define_table)
     # print(d.storge_part)

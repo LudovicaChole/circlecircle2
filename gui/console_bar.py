@@ -19,10 +19,6 @@ class C2Console(QPlainTextEdit):
             """
             QPlainTextEdit {
 
-                background-color:#1e1e1e;
-
-                color:#d4d4d4;
-
                 font-family:Consolas;
 
                 font-size:12px;
@@ -35,22 +31,24 @@ class C2Console(QPlainTextEdit):
             "Enter command..."
         )
 
-        self.prompt = "> "
-
         self.appendPlainText(
-            "CircleCircle2 Console 1.0\n"
-            "Python 3.10(default, Aug, 8, 2026, 14:54) [64 bit AMD64]\n"
-            "Type ? for more help\n"
+            "CircleCircle2 QtConsole 1.0\n"
+            "Python 3.10(default, Aug, 8, 2026, 14:54) [64 bit AMD64]; Pyside6 based on Win10 or later\n\n"
+            "Type -help for more information\n"
         )
 
         self.appendPlainText(
-            self.prompt
+            "> "
         )
 
     def append_message(self, message):
 
         self.appendPlainText(
             message
+        )
+
+        self.appendPlainText(
+            "> "
         )
 
     def keyPressEvent(self, event):
@@ -78,10 +76,6 @@ class C2Console(QPlainTextEdit):
                 self.commandEntered.emit(
                     command
                 )
-
-            self.appendPlainText(
-                self.prompt
-            )
 
             return
 

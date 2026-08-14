@@ -1,11 +1,10 @@
-def success_signal(temp_folder):
-    code = f"""temp_folder = r'{temp_folder}'
-file_path = os.path.join(temp_folder, 'success.success')
+def success_signal():
+    code = r"""
+    success_signal_file = os.path.join(work_dictionary, 'success.success')
+    
+    with open(success_signal_file, "a", encoding="utf-8") as f:
+        f.write("generate success_signal_file\n$$\n$$\n$$\n")
 
-with open(file_path, "w", encoding="utf-8") as f:
-    f.write("success")
-
-##
 ##
 ##
 ##

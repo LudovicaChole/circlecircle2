@@ -58,6 +58,9 @@ class FileLoaderThread(QThread):
 
 class C2TextEditor(QPlainTextEdit):
     dropFile = Signal(str)
+    newFile = Signal()
+    saveFile = Signal()
+    openFile = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -115,13 +118,25 @@ class C2TextEditor(QPlainTextEdit):
 
         self.search_panel.hide()
 
-        # 绑定快捷键 Ctrl+F
+        # Ctrl+F
         self.shortcut_find = QShortcut(QKeySequence("Ctrl+F"), self)
         self.shortcut_find.activated.connect(self.show_search)
 
-        # 绑定快捷键 Esc 关闭搜索框
+        # Esc
         self.shortcut_esc = QShortcut(QKeySequence("Esc"), self)
         self.shortcut_esc.activated.connect(self.hide_search)
+
+        # Ctrl+N
+        self.shortcut_new = QShortcut(QKeySequence("Ctrl+N"), self)
+        self.shortcut_new.activated.connect(self.newFile.emit)
+
+        # Ctrl+S
+        self.shortcut_save = QShortcut(QKeySequence("Ctrl+S"), self)
+        self.shortcut_save.activated.connect(self.saveFile.emit)
+
+        # Ctrl+O
+        self.shortcut_open = QShortcut(QKeySequence("Ctrl+O"), self)
+        self.shortcut_open.activated.connect(self.openFile.emit)
 
     def resizeEvent(self, event):
         """当编辑器大小改变时，保证搜索框一直悬浮在右上角"""

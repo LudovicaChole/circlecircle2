@@ -40,22 +40,24 @@ set "RUNHWX=D:\Program Files\Altair\2026\hwdesktop\hwx\bin\win64\runhwx.exe"
 import os
 import subprocess
 import time
+from utilities.logger import logger
 from core.hmdesktop.scripts_generator import ScriptsGenerator
 
 
 class RunHWX:
-    def __init__(self, hwx_path, temp_folder):
+    def __init__(self, hwx_path, work_dictionary):
         self.hwx_path = hwx_path
-        self.temp_folder = temp_folder
+        self.work_dictionary = work_dictionary
         self.scripts_generator = ScriptsGenerator()
-        self.runhwxlog_path = os.path.join(self.temp_folder, 'runhwx.log')
+        self.logger = logger
+        self.run_hwx_log = os.path.join(self.work_dictionary, 'runhwx.log')
 
-    def run_background(self, mode, target_path):
+    def run_background(self, mode, target):
 
-        hw_script_path = self.scripts_generator.write_script(temp_folder=self.temp_folder,
+        hw_script_path = self.scripts_generator.write_script(work_dictionary=self.work_dictionary,
                                                              mode=mode,
-                                                             target_path=target_path,
-                                                             runhwxlog_path=self.runhwxlog_path)
+                                                             target=target,
+                                                             run_hwx_log=self.run_hwx_log)
 
         run_code = f"""
 @echo off
@@ -82,14 +84,28 @@ set "HM_SCRIPT={hw_script_path}"
 -f %HM_SCRIPT%
 
 """
-        run_bat_path = os.path.join(self.temp_folder, "RunHWX.bat")
+        run_bat_path = os.path.join(self.work_dictionary, "RunHWX.bat")
+        success_signal_path = os.path.join(self.work_dictionary, "success.success")
 
         with open(run_bat_path, "w", encoding="utf-8", errors="ignore") as f:
             f.write(run_code)
 
-        subprocess.run(run_bat_path, shell=True, capture_output=True, text=True)
+        self.logger.info(f"RUNHWX is processing at background, please wait ...\n")
+        self.logger.info(f"RUNHWX may take a few minutes...\n")
 
-        hwx_command_path = os.path.join(self.temp_folder, "command1.tcl")
+        subprocess.run(run_bat_path, shell=True, capture_output=True, text=True)
+        # subprocess.Popen(run_bat_path)
+
+        hwx_command_path = os.path.join(self.work_dictionary, "command1.tcl")
+
+        if os.path.exists(self.run_hwx_log):
+            with open(self.run_hwx_log, "r", encoding="utf-8", errors="ignore") as f:
+                for line in f:
+                    self.logger.info(line)
+
+            self.logger.info(f"All processes have been completed\n")
+        else:
+            self.logger.error(f"runhwx.log is not found, please check again\n")
 
         if os.path.exists(run_bat_path):
             os.remove(run_bat_path)
@@ -97,11 +113,14 @@ set "HM_SCRIPT={hw_script_path}"
         if os.path.exists(hwx_command_path):
             os.remove(hwx_command_path)
 
-    def launch_hmdesktop(self, mode, target_path):
-        hw_script_path = self.scripts_generator.write_script(temp_folder=self.temp_folder,
+        if os.path.exists(hw_script_path):
+            os.remove(hw_script_path)
+
+    def launch_hmdesktop(self, mode, target):
+        hw_script_path = self.scripts_generator.write_script(work_dictionary=self.work_dictionary,
                                                              mode=mode,
-                                                             target_path=target_path,
-                                                             runhwxlog_path=self.runhwxlog_path)
+                                                             target=target,
+                                                             run_hwx_log=self.run_hwx_log)
 
         run_code = f"""
 @echo off
@@ -120,28 +139,44 @@ set "HM_SCRIPT={hw_script_path}"
 -f %HM_SCRIPT%
 """
 
-        run_bat_path = os.path.join(self.temp_folder, "RunHWX.bat")
-        success_signal_path = os.path.join(self.temp_folder, "success.success")
+        run_bat_path = os.path.join(self.work_dictionary, "RunHWX.bat")
+        success_signal_path = os.path.join(self.work_dictionary, "success.success")
 
         with open(run_bat_path, "w", encoding="utf-8", errors="ignore") as f:
             f.write(run_code)
 
         subprocess.Popen(run_bat_path)
 
+        print(f"File {target} is opened in HyperMesh\n")
+
+        hwx_command_path = os.path.join(self.work_dictionary, "command1.tcl")
+
         while True:
             if os.path.exists(success_signal_path):
                 os.remove(success_signal_path)
-                os.remove(run_bat_path)
-                os.remove(hw_script_path)
+
+                if os.path.exists(run_bat_path):
+                    os.remove(run_bat_path)
+
+                if os.path.exists(hw_script_path):
+                    os.remove(hw_script_path)
+
+                if os.path.exists(hwx_command_path):
+                    os.remove(hwx_command_path)
+
                 break
 
             time.sleep(2)
 
 
-hwx_path = r"D:\Program Files\Altair\2026\hwdesktop\hwx\bin\win64\runhwx.exe"
-temp_folder = r"D:\Work\WJD\P200_PyProject\Test_Data\runhwx"
-stp_path = r"D:\Work\WJD\P200_PyProject\Test_Data\test_banjin.stp"
-hm_path = r"D:\Work\WJD\P200_PyProject\Test_Data\test_banjin_c2auto.hm"
+hwx_path = r"C:\Program Files\Altair\2026\hwdesktop\hwx\bin\win64\runhwx.exe"
+temp_folder = r"E:\PythonProject\test_hwx"
+stp_path = r"E:\PythonProject\test_hwx\Part1.stp"
+hm_path = r"E:\PythonProject\test_hwx\761D_Outer_Beam_c2auto.hm"
+fea_path = r"E:\PythonProject\test_hwx\761D_Outer_Beam.k"
 
-text_runhwx = RunHWX(hwx_path, temp_folder)
-text_runhwx.run_background(mode="run_background_hm", target_path=hm_path)
+runhwx = RunHWX(hwx_path, temp_folder)
+runhwx.run_background(mode="run_background_stp", target=stp_path)
+# runhwx.run_background(mode="run_background_hm", target=hm_path)
+# runhwx.launch_hmdesktop(mode="launch_key", target=fea_path)
+# runhwx.launch_hmdesktop(mode="launch_hm", target=hm_path)
