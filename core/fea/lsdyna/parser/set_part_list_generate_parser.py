@@ -48,7 +48,7 @@ class SetPartListGenerateParser(Parser):
             for i in range(begin, end + 1):
                 current_set_list_object.ids.append(i)
 
-            self.reset()
+            # More range cards may follow under the same set keyword.
 
             return
 

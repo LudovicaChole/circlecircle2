@@ -17,17 +17,17 @@ class ConstrainedExtraNodesSetParser(Parser):
         iflag_raw = line_raw[20:30].strip()
 
         if len(pid_raw) > 0:
-            pid = pid_raw[1:] if pid_raw.startswith("&") else int(pid_raw)
+            pid = self.dataframe.parameter[pid_raw[1:]].value if pid_raw.startswith("&") else int(pid_raw)
         else:
             pid = 0
 
         if len(nsid_raw) > 0:
-            nsid = nsid_raw[1:] if nsid_raw.startswith("&") else int(nsid_raw)
+            nsid = self.dataframe.parameter[nsid_raw[1:]].value if nsid_raw.startswith("&") else int(nsid_raw)
         else:
             nsid = 0
 
         if len(iflag_raw) > 0:
-            iflag = iflag_raw[1:] if iflag_raw.startswith("&") else int(iflag_raw)
+            iflag = self.dataframe.parameter[iflag_raw[1:]].value if iflag_raw.startswith("&") else int(iflag_raw)
         else:
             iflag = 0
 

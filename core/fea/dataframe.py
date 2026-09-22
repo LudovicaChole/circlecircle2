@@ -8,6 +8,17 @@ class DataFrame:
         self.solver = None
 
         self.storge = {
+            "element_mass": {},
+            "set_solid_list": {},
+            "database_nodfor": {},
+            "database_spcforc": {},
+            "database_binary_d3dump": {},
+            "database_binary_runrsf": {},
+            "database_binary_d3thdt": {},
+            "control_hourglass": {},
+            "mat_add_damage_gissmo": {},
+            "contact_single_edge_id": {},
+
             "keyword": {},
             "parameter": {},
             "node": {},
@@ -21,6 +32,7 @@ class DataFrame:
             "hourglass": {},
             "set_node_list": {},
             "set_shell_list": {},
+            "set_segment": {},
             "set_part_list": {},
             "database_history_node": {},
             "define_curve": {},
@@ -81,6 +93,8 @@ class DataFrame:
         self.storge_rigid_part_goc_xyz = {}    # only used in translator
         self.storge_rigid_part_goc_con = {}    # only used in translator
 
+        self.storge_rigid_part_reference_node = {}
+
         self.storge_material_id = []
 
         self.storge_pam_elastic_solid_material = {}    # only used in pamcrash translator
@@ -94,6 +108,7 @@ class DataFrame:
         }
 
         self.output_storge = {}
+        self.output_history_node = []
 
     def reset(self):
         self.solver = None
@@ -113,6 +128,8 @@ class DataFrame:
 
         self.storge_rigid_part_goc_con.clear()
 
+        self.storge_rigid_part_reference_node.clear()
+
         self.storge_material_id.clear()
 
         self.storge_pam_elastic_solid_material.clear()
@@ -121,6 +138,51 @@ class DataFrame:
             sub_list.clear()
 
         self.output_storge.clear()
+        self.output_history_node.clear()
+
+    @property
+    def set_segment(self):
+        return self.storge["set_segment"]
+
+    @property
+    def element_mass(self):
+        return self.storge["element_mass"]
+
+    @property
+    def set_solid_list(self):
+        return self.storge["set_solid_list"]
+
+    @property
+    def database_nodfor(self):
+        return self.storge["database_nodfor"]
+
+    @property
+    def database_spcforc(self):
+        return self.storge["database_spcforc"]
+
+    @property
+    def database_binary_d3dump(self):
+        return self.storge["database_binary_d3dump"]
+
+    @property
+    def database_binary_runrsf(self):
+        return self.storge["database_binary_runrsf"]
+
+    @property
+    def database_binary_d3thdt(self):
+        return self.storge["database_binary_d3thdt"]
+
+    @property
+    def control_hourglass(self):
+        return self.storge["control_hourglass"]
+
+    @property
+    def mat_add_damage_gissmo(self):
+        return self.storge["mat_add_damage_gissmo"]
+
+    @property
+    def contact_single_edge_id(self):
+        return self.storge["contact_single_edge_id"]
 
     # for fea parser
     @property

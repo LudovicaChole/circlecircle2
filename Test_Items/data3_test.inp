@@ -1,0 +1,24 @@
+*INCLUDE, INPUT="data3_test.geo"
+** Time, mass, velocity and energy use the source consistent unit system.
+*AMPLITUDE, NAME=dyna_motion_1, TIME=TOTAL TIME
+0, 0
+200, 200
+1000, 1000
+*AMPLITUDE, NAME=dyna_motion_2, TIME=TOTAL TIME
+0, 0
+200, -0.0523
+1000, -0.0523
+*STEP, NAME=DefaultStep, NLGEOM=YES
+*DYNAMIC, EXPLICIT
+, 190
+** PART 15, MAT20 57, LCID 1, source DOF 2
+*BOUNDARY, TYPE=DISPLACEMENT, AMPLITUDE=dyna_motion_1
+18323143, 2, 2, 0
+** PART 15, MAT20 57, LCID 1820055, source DOF 5
+*BOUNDARY, TYPE=DISPLACEMENT, AMPLITUDE=dyna_motion_2
+18323143, 4, 4, 1
+*CONTACT PAIR, INTERACTION=dyna_contact_1_fric, MECHANICAL CONSTRAINT=PENALTY
+dyna_contact_1_slave, dyna_contact_1_master
+*CONTACT PAIR, INTERACTION=dyna_contact_7_fric, MECHANICAL CONSTRAINT=PENALTY
+dyna_contact_7_slave, dyna_contact_7_master
+*END STEP

@@ -9,15 +9,15 @@ class MaterialTranslator(Translator):
             "2020": self._2020,
         }
 
-    def translate(self, version):
+    def translate(self, version, material_mapping=None):
         try:
             if version in self.version:
-                self.version[version]()
+                self.version[version](material_mapping)
 
         except Exception as e:
             raise Exception(f"PAMCRASH MatElasticTranslator ERROR: {e}") from e
 
-    def _2020(self):
+    def _2020(self, material_mapping=None):
         part_dict = self.dataframe.part
         material_dict = self.dataframe.material
         elastic_solid_material_dict = self.dataframe.storge_pam_elastic_solid_material
@@ -41,6 +41,13 @@ class MaterialTranslator(Translator):
                     e = material.e
                     pr = material.pr
                     material_tag = material.tag
+
+                    if material_mapping is not None:
+                        mapped_material = material_mapping.render(material, mid)
+                        if mapped_material is not None:
+                            output_storge.append(mapped_material)
+                            temp_material_id.add(mid)
+                            continue
 
                     if material_tag == "elastic" or material_tag == "rigid":
                         output_storge.append(

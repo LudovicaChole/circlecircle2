@@ -1,3 +1,4 @@
+from .analysis_data import is_explicit
 from core.fea.translator import Translator
 
 
@@ -15,7 +16,7 @@ class ElementTranslator(Translator):
                 self.version[version]()
 
         except Exception as e:
-            raise Exception(f"ABAQUS NodeTranslator ERROR: {e}") from e
+            raise Exception(f"ABAQUS ElementTranslator ERROR: {e}") from e
 
     def _6p14(self):
         part_dict = self.dataframe.part
@@ -38,6 +39,8 @@ class ElementTranslator(Translator):
 
                 part_name = part_dict[pid].name
                 mid = part_dict[pid].mid
+                if mid not in material_dict:
+                    raise ValueError(f"Part {pid}: missing material {mid}; check unsupported source material keywords")
                 material_name = material_dict[mid].name
                 secid = part_dict[pid].secid
                 section_name = "default"
@@ -116,7 +119,7 @@ class ElementTranslator(Translator):
                     )
 
                     output_storge["*ELEMENT"].append(
-                        f"*ELEMENT,TYPE=S3,ELSET={property_name}\n"
+                        f"*ELEMENT,TYPE={'S3R' if is_explicit(self.dataframe) else 'S3'},ELSET={property_name}\n"
                     )
 
                     for line in temp_s3:
@@ -128,7 +131,7 @@ class ElementTranslator(Translator):
                     )
 
                     output_storge["*ELEMENT"].append(
-                        f"*ELEMENT,TYPE=S4,ELSET={property_name}\n"
+                        f"*ELEMENT,TYPE={'S4R' if is_explicit(self.dataframe) else 'S4'},ELSET={property_name}\n"
                     )
 
                     for line in temp_s4:

@@ -1,0 +1,325 @@
+**************************************************************************** 
+Info        : STEP Reader 
+Info        : HyperWorks Version 2026.0.0.27 
+Info        : Input file - E:\PythonProject\test_hwx\Part1.stp 
+Info        : Translator used - C:/Program Files/Altair/2026/hwdesktop/io/cn_translators/bin/win64/ct_reader.exe 
+Info        : Translation start time - 08-14-2026 04:41:53 
+Info        :  
+Info        :  
+Info        : -------------------------------------------------- 
+Info        : Import options selected in HyperMesh 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        :   Command line options 
+Info        :   ---------------------- 
+Info        :   AvoidPartAttributes               = off 
+Info        :   BodyIDAsMetadata                  = off 
+Info        :   CleanupTol                        = -0.01 
+Info        :   ColorsAsMetadata                  = off 
+Info        :   CreationType                      = Parts 
+Info        :   DegSurfTol                        = 0.0 
+Info        :   DensityAsMetadata                 = off 
+Info        :   DisplayRepresentation             = off 
+Info        :   DoNotMergeEdges                   = on 
+Info        :   FullNameAsMetadata                = off 
+Info        :   ImportBlanked                     = off 
+Info        :   ImportCoordinateSystems           = on 
+Info        :   ImportFreeCurves                  = on 
+Info        :   ImportFreePoints                  = on 
+Info        :   LayerAsMetadata                   = off 
+Info        :   LegacyHierarchyAsMetadata         = off 
+Info        :   MID                               = MaterialId 
+Info        :   MaterialName                      = Material 
+Info        :   MeshFlag                          = MeshFlag 
+Info        :   OriginalIdAsMetadata              = on 
+Info        :   PID                               = PID 
+Info        :   PartName                          = PartName 
+Info        :   PartNumber                        = PartNumber 
+Info        :   Revision                          = Revision 
+Info        :   ScaleFactor                       = 1.0 
+Info        :   SkipCreationOfSolid               = off 
+Info        :   SplitComponents                   = Body 
+Info        :   StitchingAcrossBodies             = on 
+Info        :   TagsAsMetadata                    = on 
+Info        :   TargetUnits                       = CAD 
+Info        :   ThicknessName                     = Thickness 
+Info        :   UID                               = UID 
+Info        :   UpdateSketchingUnits              = on 
+Info        :   VariantCondition                  = VariantCondition 
+Info        :   VariantScope                      = VariantScope 
+Info        :  
+Info        :   INI file options 
+Info        :   ---------------------- 
+Info        :   AvoidThirdPartyConversion         = on 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        : Third party library used - CT Library Version 2025-SP1. 
+Info        : CT license Key  = altair%1dza0qky077j12ki17u00sqm0qh40sqm12ki17u001t617u00fkp07rt0sqm1cj9167c0zcb0zaj0zcb1dza0drt0ziz08kx0lye10x70ziz1dza167c10x70ziz. 
+Info        : CT license Key Initialization Completed Successfully. 
+Info        : Reading STEP file E:\PythonProject\test_hwx\Part1.stp. 
+Info        :  
+Info        : Translation end time - 08-14-2026 04:41:55 
+Info        : Translation duration - 2.000000 sec 
+**************************************************************************** 
+
+ 
+**************************************************************************** 
+Info        : STEP Reader 
+Info        : HyperWorks Version 2026.0.0.27 
+Info        : Input file - E:\PythonProject\test_hwx\Part1.stp 
+Info        : Translator used - C:/Program Files/Altair/2026/hwdesktop/io/cn_translators/bin/win64/ct_reader.exe 
+Info        : Translation start time - 08-14-2026 04:56:07 
+Info        :  
+Info        :  
+Info        : -------------------------------------------------- 
+Info        : Import options selected in HyperMesh 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        :   Command line options 
+Info        :   ---------------------- 
+Info        :   AvoidPartAttributes               = off 
+Info        :   BodyIDAsMetadata                  = off 
+Info        :   CleanupTol                        = -0.01 
+Info        :   ColorsAsMetadata                  = off 
+Info        :   CreationType                      = Parts 
+Info        :   DegSurfTol                        = 0.0 
+Info        :   DensityAsMetadata                 = off 
+Info        :   DisplayRepresentation             = off 
+Info        :   DoNotMergeEdges                   = on 
+Info        :   FullNameAsMetadata                = off 
+Info        :   ImportBlanked                     = off 
+Info        :   ImportCoordinateSystems           = on 
+Info        :   ImportFreeCurves                  = on 
+Info        :   ImportFreePoints                  = on 
+Info        :   LayerAsMetadata                   = off 
+Info        :   LegacyHierarchyAsMetadata         = off 
+Info        :   MID                               = MaterialId 
+Info        :   MaterialName                      = Material 
+Info        :   MeshFlag                          = MeshFlag 
+Info        :   OriginalIdAsMetadata              = on 
+Info        :   PID                               = PID 
+Info        :   PartName                          = PartName 
+Info        :   PartNumber                        = PartNumber 
+Info        :   Revision                          = Revision 
+Info        :   ScaleFactor                       = 1.0 
+Info        :   SkipCreationOfSolid               = off 
+Info        :   SplitComponents                   = Body 
+Info        :   StitchingAcrossBodies             = on 
+Info        :   TagsAsMetadata                    = on 
+Info        :   TargetUnits                       = CAD 
+Info        :   ThicknessName                     = Thickness 
+Info        :   UID                               = UID 
+Info        :   UpdateSketchingUnits              = on 
+Info        :   VariantCondition                  = VariantCondition 
+Info        :   VariantScope                      = VariantScope 
+Info        :  
+Info        :   INI file options 
+Info        :   ---------------------- 
+Info        :   AvoidThirdPartyConversion         = on 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        : Third party library used - CT Library Version 2025-SP1. 
+Info        : CT license Key  = altair%1dza0qky077j12ki17u00sqm0qh40sqm12ki17u001t617u00fkp07rt0sqm1cj9167c0zcb0zaj0zcb1dza0drt0ziz08kx0lye10x70ziz1dza167c10x70ziz. 
+Info        : CT license Key Initialization Completed Successfully. 
+Info        : Reading STEP file E:\PythonProject\test_hwx\Part1.stp. 
+Info        :  
+Info        : Translation end time - 08-14-2026 04:56:08 
+Info        : Translation duration - 1.000000 sec 
+**************************************************************************** 
+
+ 
+**************************************************************************** 
+Info        : STEP Reader 
+Info        : HyperWorks Version 2026.0.0.27 
+Info        : Input file - E:\PythonProject\test_hwx\Part1.stp 
+Info        : Translator used - C:/Program Files/Altair/2026/hwdesktop/io/cn_translators/bin/win64/ct_reader.exe 
+Info        : Translation start time - 08-14-2026 06:08:32 
+Info        :  
+Info        :  
+Info        : -------------------------------------------------- 
+Info        : Import options selected in HyperMesh 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        :   Command line options 
+Info        :   ---------------------- 
+Info        :   AvoidPartAttributes               = off 
+Info        :   BodyIDAsMetadata                  = off 
+Info        :   CleanupTol                        = -0.01 
+Info        :   ColorsAsMetadata                  = off 
+Info        :   CreationType                      = Parts 
+Info        :   DegSurfTol                        = 0.0 
+Info        :   DensityAsMetadata                 = off 
+Info        :   DisplayRepresentation             = off 
+Info        :   DoNotMergeEdges                   = on 
+Info        :   FullNameAsMetadata                = off 
+Info        :   ImportBlanked                     = off 
+Info        :   ImportCoordinateSystems           = on 
+Info        :   ImportFreeCurves                  = on 
+Info        :   ImportFreePoints                  = on 
+Info        :   LayerAsMetadata                   = off 
+Info        :   LegacyHierarchyAsMetadata         = off 
+Info        :   MID                               = MaterialId 
+Info        :   MaterialName                      = Material 
+Info        :   MeshFlag                          = MeshFlag 
+Info        :   OriginalIdAsMetadata              = on 
+Info        :   PID                               = PID 
+Info        :   PartName                          = PartName 
+Info        :   PartNumber                        = PartNumber 
+Info        :   Revision                          = Revision 
+Info        :   ScaleFactor                       = 1.0 
+Info        :   SkipCreationOfSolid               = off 
+Info        :   SplitComponents                   = Body 
+Info        :   StitchingAcrossBodies             = on 
+Info        :   TagsAsMetadata                    = on 
+Info        :   TargetUnits                       = CAD 
+Info        :   ThicknessName                     = Thickness 
+Info        :   UID                               = UID 
+Info        :   UpdateSketchingUnits              = on 
+Info        :   VariantCondition                  = VariantCondition 
+Info        :   VariantScope                      = VariantScope 
+Info        :  
+Info        :   INI file options 
+Info        :   ---------------------- 
+Info        :   AvoidThirdPartyConversion         = on 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        : Third party library used - CT Library Version 2025-SP1. 
+Info        : CT license Key  = altair%1dza0qky077j12ki17u00sqm0qh40sqm12ki17u001t617u00fkp07rt0sqm1cj9167c0zcb0zaj0zcb1dza0drt0ziz08kx0lye10x70ziz1dza167c10x70ziz. 
+Info        : CT license Key Initialization Completed Successfully. 
+Info        : Reading STEP file E:\PythonProject\test_hwx\Part1.stp. 
+Info        :  
+Info        : Translation end time - 08-14-2026 06:08:33 
+Info        : Translation duration - 1.000000 sec 
+**************************************************************************** 
+
+ 
+**************************************************************************** 
+Info        : STEP Reader 
+Info        : HyperWorks Version 2026.0.0.27 
+Info        : Input file - E:\PythonProject\test_hwx\Part1.stp 
+Info        : Translator used - C:/Program Files/Altair/2026/hwdesktop/io/cn_translators/bin/win64/ct_reader.exe 
+Info        : Translation start time - 08-31-2026 06:08:22 
+Info        :  
+Info        :  
+Info        : -------------------------------------------------- 
+Info        : Import options selected in HyperMesh 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        :   Command line options 
+Info        :   ---------------------- 
+Info        :   AvoidPartAttributes               = off 
+Info        :   BodyIDAsMetadata                  = off 
+Info        :   CleanupTol                        = -0.01 
+Info        :   ColorsAsMetadata                  = off 
+Info        :   CreationType                      = Parts 
+Info        :   DegSurfTol                        = 0.0 
+Info        :   DensityAsMetadata                 = off 
+Info        :   DisplayRepresentation             = off 
+Info        :   DoNotMergeEdges                   = on 
+Info        :   FullNameAsMetadata                = off 
+Info        :   ImportBlanked                     = off 
+Info        :   ImportCoordinateSystems           = on 
+Info        :   ImportFreeCurves                  = on 
+Info        :   ImportFreePoints                  = on 
+Info        :   LayerAsMetadata                   = off 
+Info        :   LegacyHierarchyAsMetadata         = off 
+Info        :   MID                               = MaterialId 
+Info        :   MaterialName                      = Material 
+Info        :   MeshFlag                          = MeshFlag 
+Info        :   OriginalIdAsMetadata              = on 
+Info        :   PID                               = PID 
+Info        :   PartName                          = PartName 
+Info        :   PartNumber                        = PartNumber 
+Info        :   Revision                          = Revision 
+Info        :   ScaleFactor                       = 1.0 
+Info        :   SkipCreationOfSolid               = off 
+Info        :   SplitComponents                   = Body 
+Info        :   StitchingAcrossBodies             = on 
+Info        :   TagsAsMetadata                    = on 
+Info        :   TargetUnits                       = CAD 
+Info        :   ThicknessName                     = Thickness 
+Info        :   UID                               = UID 
+Info        :   UpdateSketchingUnits              = on 
+Info        :   VariantCondition                  = VariantCondition 
+Info        :   VariantScope                      = VariantScope 
+Info        :  
+Info        :   INI file options 
+Info        :   ---------------------- 
+Info        :   AvoidThirdPartyConversion         = on 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        : Third party library used - CT Library Version 2025-SP1. 
+Info        : CT license Key  = altair%1dza0qky077j12ki17u00sqm0qh40sqm12ki17u001t617u00fkp07rt0sqm1cj9167c0zcb0zaj0zcb1dza0drt0ziz08kx0lye10x70ziz1dza167c10x70ziz. 
+Info        : CT license Key Initialization Completed Successfully. 
+Info        : Reading STEP file E:\PythonProject\test_hwx\Part1.stp. 
+Info        :  
+Info        : Translation end time - 08-31-2026 06:08:23 
+Info        : Translation duration - 1.000000 sec 
+**************************************************************************** 
+
+ 
+**************************************************************************** 
+Info        : STEP Reader 
+Info        : HyperWorks Version 2026.0.0.27 
+Info        : Input file - E:\PythonProject\test_hwx\Part1.stp 
+Info        : Translator used - C:/Program Files/Altair/2026/hwdesktop/io/cn_translators/bin/win64/ct_reader.exe 
+Info        : Translation start time - 08-31-2026 06:10:12 
+Info        :  
+Info        :  
+Info        : -------------------------------------------------- 
+Info        : Import options selected in HyperMesh 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        :   Command line options 
+Info        :   ---------------------- 
+Info        :   AvoidPartAttributes               = off 
+Info        :   BodyIDAsMetadata                  = off 
+Info        :   CleanupTol                        = -0.01 
+Info        :   ColorsAsMetadata                  = off 
+Info        :   CreationType                      = Parts 
+Info        :   DegSurfTol                        = 0.0 
+Info        :   DensityAsMetadata                 = off 
+Info        :   DisplayRepresentation             = off 
+Info        :   DoNotMergeEdges                   = on 
+Info        :   FullNameAsMetadata                = off 
+Info        :   ImportBlanked                     = off 
+Info        :   ImportCoordinateSystems           = on 
+Info        :   ImportFreeCurves                  = on 
+Info        :   ImportFreePoints                  = on 
+Info        :   LayerAsMetadata                   = off 
+Info        :   LegacyHierarchyAsMetadata         = off 
+Info        :   MID                               = MaterialId 
+Info        :   MaterialName                      = Material 
+Info        :   MeshFlag                          = MeshFlag 
+Info        :   OriginalIdAsMetadata              = on 
+Info        :   PID                               = PID 
+Info        :   PartName                          = PartName 
+Info        :   PartNumber                        = PartNumber 
+Info        :   Revision                          = Revision 
+Info        :   ScaleFactor                       = 1.0 
+Info        :   SkipCreationOfSolid               = off 
+Info        :   SplitComponents                   = Body 
+Info        :   StitchingAcrossBodies             = on 
+Info        :   TagsAsMetadata                    = on 
+Info        :   TargetUnits                       = CAD 
+Info        :   ThicknessName                     = Thickness 
+Info        :   UID                               = UID 
+Info        :   UpdateSketchingUnits              = on 
+Info        :   VariantCondition                  = VariantCondition 
+Info        :   VariantScope                      = VariantScope 
+Info        :  
+Info        :   INI file options 
+Info        :   ---------------------- 
+Info        :   AvoidThirdPartyConversion         = on 
+Info        : -------------------------------------------------- 
+Info        :  
+Info        : Third party library used - CT Library Version 2025-SP1. 
+Info        : CT license Key  = altair%1dza0qky077j12ki17u00sqm0qh40sqm12ki17u001t617u00fkp07rt0sqm1cj9167c0zcb0zaj0zcb1dza0drt0ziz08kx0lye10x70ziz1dza167c10x70ziz. 
+Info        : CT license Key Initialization Completed Successfully. 
+Info        : Reading STEP file E:\PythonProject\test_hwx\Part1.stp. 
+Info        :  
+Info        : Translation end time - 08-31-2026 06:10:12 
+Info        : Translation duration - 0.000000 sec 
+**************************************************************************** 
+
+ 

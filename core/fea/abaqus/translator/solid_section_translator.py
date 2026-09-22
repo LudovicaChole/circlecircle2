@@ -25,7 +25,7 @@ class SolidSectionTranslator(Translator):
         if len(part_dict) > 0 and len(section_solid_dict) > 0 and len(material_dict) > 0:
             temp_section_name = set()
 
-            output_storge = self.dataframe.output_storge.setdefault("*SHELL_SECTION", [])
+            output_storge = self.dataframe.output_storge.setdefault("*SOLID_SECTION", [])
 
             for pid, part in part_dict.items():
                 mid = part_dict[pid].mid

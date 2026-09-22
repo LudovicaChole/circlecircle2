@@ -1,3 +1,10 @@
+from core.fea.pamcrash.translator.group_translator import GroupTranslator
+from core.fea.pamcrash.translator.mtoco_translator import MtocoTranslator
+from core.fea.pamcrash.translator.thnod_translator import ThnodTranslator
+from core.fea.pamcrash.translator.secfo_translator import SecfoTranslator
+from core.fea.pamcrash.translator.cntac33_translator import Cntac33Translator
+from core.fea.pamcrash.translator.cntac36_translator import Cntac36Translator
+from core.fea.pamcrash.translator.cntac43_translator import Cntac43Translator
 from utilities.logger import logger
 from core.fea.solver import Solver
 from core.fea.pamcrash.parser.pyvar_parser import PyvarParser
@@ -14,7 +21,6 @@ from core.fea.pamcrash.translator.part_translator import PartTranslator
 from core.fea.pamcrash.translator.material_translator import MaterialTranslator
 from core.fea.pamcrash.translator.material_mapping_translator import MaterialMappingTranslator
 from core.fea.pamcrash.translator.funct_translator import FunctTranslator
-from core.fea.pamcrash.translator.funct_mapping_translator import FunctMappingTranslator
 
 
 class PamCrash(Solver):
@@ -52,8 +58,23 @@ class PamCrash(Solver):
             "SOLID": SolidTranslator(),
             "PART": PartTranslator(),
             "MATER": MaterialMappingTranslator(),
-            "FUNCT": FunctMappingTranslator(),
+            "FUNCT": FunctTranslator(),
         }
+
+        # Existing geometry/material card layouts are retained for 2023.
+        for registry in (self.translate_keywords, self.translate_keywords_mapping):
+            for translator in registry.values():
+                if hasattr(translator, 'version') and '2020' in translator.version:
+                    translator.version['2023'] = translator.version['2020']
+            registry.update({
+                "GROUP": GroupTranslator(),
+                "MTOCO": MtocoTranslator(),
+                "THNOD": ThnodTranslator(),
+                "SECFO": SecfoTranslator(),
+                "CNTAC33": Cntac33Translator(),
+                "CNTAC36": Cntac36Translator(),
+                "CNTAC43": Cntac43Translator(),
+            })
 
         self.not_support_keywords = set()
 

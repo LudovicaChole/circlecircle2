@@ -103,7 +103,7 @@ class MatRigidTitleParser(Parser):
                 alias = 0.0
 
             if len(cmo_raw) > 0:
-                cmo = self.dataframe.parameter[con1_raw[1:]].value if con1_raw.startswith("&") else float(con1_raw)
+                cmo = self.dataframe.parameter[cmo_raw[1:]].value if cmo_raw.startswith("&") else float(cmo_raw)
             else:
                 cmo = 0.0
 

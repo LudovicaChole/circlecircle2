@@ -1,41 +1,22 @@
 from core.fea.parser import Parser
 from core.fea.lsdyna.keywords.boundary_prescribed_motion_rigid import BoundaryPrescribedMotionRigid
+from .card_fields import fields, number
 
 
 class BoundaryPrescribedMotionRigidParser(Parser):
     def __init__(self):
         super().__init__()
+        self.version = {"12.0": self._read, "13.0": self._read}
 
-        self.version = {
-            "12.0": self._12p0,
-            "13.0": self._12p0,
-        }
-
-    def _12p0(self, line_raw):
-        typeid_raw = line_raw[0:10].strip()
-        dof_raw = line_raw[10:20].strip()
-        lcid_raw = line_raw[30:40].strip()
-
-        if len(typeid_raw) > 0:
-            typeid = self.dataframe.parameter[typeid_raw[1:]] if typeid_raw.startswith("&") else int(typeid_raw)
-        else:
-            typeid = 0
-
-        if len(dof_raw) > 0:
-            dof = self.dataframe.parameter[dof_raw[1:]] if dof_raw.startswith("&") else int(dof_raw)
-        else:
-            dof = 0
-
-        if len(lcid_raw) > 0:
-            lcid = self.dataframe.parameter[lcid_raw[1:]] if lcid_raw.startswith("&") else int(lcid_raw)
-        else:
-            lcid = 0
-
+    def _read(self, line_raw):
+        if not line_raw.strip():
+            return
+        names = 'typeid dof vad lcid sf vid death birth'.split()
+        defaults = [0, 0, 0, 0, 1.0, 0, 1e28, 0.0]
+        values = {name: number(raw, self.dataframe, defaults[i], integer=i in (0, 1, 2, 3, 5))
+                  for i, (name, raw) in enumerate(zip(names, fields(line_raw)))}
         uid = len(self.dataframe.boundary_prescribed_motion_rigid) + 1
-
-        self.dataframe.boundary_prescribed_motion_rigid[uid] = BoundaryPrescribedMotionRigid(uid=uid,
-                                                                                             typeid=typeid,
-                                                                                             dof=dof,
-                                                                                             lcid=lcid)
-
-        return
+        obj = BoundaryPrescribedMotionRigid(uid=uid, **values)
+        for name, value in values.items():
+            setattr(obj, name, value)
+        self.dataframe.boundary_prescribed_motion_rigid[uid] = obj

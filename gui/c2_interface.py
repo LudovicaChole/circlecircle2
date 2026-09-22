@@ -72,7 +72,7 @@ class SelectDialog(QDialog):
         self.version_combo.clear()
 
         if solver_name == "PamCrash":
-            self.version_combo.addItems(["2020", "2021", "2022"])
+            self.version_combo.addItems(["2020", "2023"])
         elif solver_name == "ABAQUS":
             self.version_combo.addItems(["6.14", "2025", "2026"])
         elif solver_name == "Optistruct":
@@ -367,6 +367,8 @@ class MainWindow(QMainWindow):
 
     def translate_file(self, file_path):
 
+        material_mapping_file_path = r"C:\Users\jiand\PycharmProjects\circlecircle2\Test_Items\material_mapping.json"
+
         basename = os.path.basename(file_path)
         name, ext = os.path.splitext(basename)
 
@@ -380,7 +382,14 @@ class MainWindow(QMainWindow):
                 selected_solver = result["solver"]
                 selected_version = result["version"]
 
-                print(selected_solver, selected_version)
+                # print(selected_solver, selected_version)
+                fea_keywords_translator.translate(file_path=file_path,
+                                                  solver1="lsdyna",
+                                                  version1="12.0",
+                                                  solver2=selected_solver,
+                                                  version2=selected_version,
+                                                  material_mapping=False,
+                                                  material_mapping_file_path=material_mapping_file_path)
 
     def handle_command(self, command):
 

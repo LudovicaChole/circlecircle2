@@ -169,7 +169,7 @@ class MatModifiedPiecewiseLinearPlasticityTitleParser(Parser):
                 lcss = 0
 
             if len(lcsr_raw) > 0:
-                lcsr = self.dataframe.parameter[lcsr_raw[1:]].value if lcss_raw.startswith("&") else float(lcss_raw)
+                lcsr = self.dataframe.parameter[lcsr_raw[1:]].value if lcsr_raw.startswith("&") else float(lcsr_raw)
             else:
                 lcsr = 0.0
 

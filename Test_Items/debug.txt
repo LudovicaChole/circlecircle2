@@ -1,0 +1,174 @@
+检查我运行后的log文件，有一些关键字不支持的，请参考ls-dyna的关键字解析格式，在我的C:\Users\jiand\PycharmProjects\circlecircle2\core\fea\lsdyna\parser文件夹下，增加
+database_nodfor_parser.py
+control_hourglass_parser.py
+database_binary_d3dump_parser.py
+database_binary_d3thdt_parser.py
+database_spcforc_parser.py
+database_binary_runrsf_parser.py
+MAT_PIECEWISE_LINEAR_PLASTICITY_parser.py
+MAT_PIECEWISE_LINEAR_PLASTICITY_TITLE_parser.py
+SET_PART_LIST_COLLECT_TITLE_parser.py
+MAT_ADD_DAMAGE_GISSMO_TITLE_parser.py
+CONTACT_SINGLE_EDGE_ID_parser.py
+ELEMENT_MASS_parser.py
+所有上述文件名称都小写，我有一些写成大写了，帮我改成小写
+然后源文件在目录：C:\Users\jiand\PycharmProjects\circlecircle2\Test_Items下，如果有格式不太明确或者想找关键字内容的话，可以参考源文件和搜索网上LS-dyna的关键字帮助文档
+然后帮我检查下我的程序是否有逻辑错误， 同时修改已经有的abaqus转换逻辑，在这个文件夹下：C:\Users\jiand\PycharmProjects\circlecircle2\core\fea\abaqus\translator
+对history_node_translator.py， 我希望history node直接写进 step里面，而不是采用外挂的形式
+对step_translator.py， 我希望默认生成一个static的载荷步，而不是显示动力学载荷步，
+然后如果ls-dyna转换关键字里有*INITIAL_VELOCITY_GENERATION， 请把这个初始速度换算一下，根据ls-dyna的终止时间，例如速度是4， 时间是100，计算一下关联速度的节点是否有对应的mass单元ELEMENT_MASS，然后计算下总共的能量，然后按照abaqus显示动力学的格式生成step，并把能量作为备注写在文件里
+然后如果有boundary_prescribed_motion_rigid_parser， 请检查这个关联的part，就是TYPEID下的partid，对应的part所用的mat20材料以及约束了哪几个自由度，以及引用了哪个加载曲线，在abaqus中采用对应的显示动力学step，约束对应的part的自由度
+最后转换成ababqus的时候，我只希望有两个文件，一个是模型文件 .geo结尾， 一个是计算启动文件.inp结尾，计算启动文件中通过include引用.geo文件
+
+最后，对于没有见过的LS-DYna材料，参考我写的材料生成文件"C:\Users\jiand\PycharmProjects\circlecircle2\services\fea_material_generator.py"，把新材料添加到对应的ls-dyna材料中
+
+
+data1.k
+
+2026-09-22 09:05:52,165 | WARNING | user_logger | Ls-Dyna not support keywords: *DATABASE_NODFOR
+2026-09-22 09:05:52,165 | WARNING | user_logger | Ls-Dyna not support keywords: *CONTROL_HOURGLASS
+2026-09-22 09:05:52,165 | WARNING | user_logger | Ls-Dyna not support keywords: *DATABASE_BINARY_D3DUMP
+2026-09-22 09:05:52,165 | WARNING | user_logger | Ls-Dyna not support keywords: *DATABASE_BINARY_D3THDT
+2026-09-22 09:05:52,165 | WARNING | user_logger | Ls-Dyna not support keywords: *DATABASE_SPCFORC
+2026-09-22 09:05:52,165 | WARNING | user_logger | Ls-Dyna not support keywords: *DATABASE_BINARY_RUNRSF
+2026-09-22 09:05:52,168 | WARNING | user_logger | Material mapping: no abaqus template for 20 (default_2); using standard translation
+2026-09-22 09:05:52,169 | WARNING | user_logger | Material mapping: no abaqus template for 19 (default_1); using standard translation
+2026-09-22 09:05:52,169 | WARNING | user_logger | Material mapping: no abaqus template for 1800055 (S628_Alu_Gissmo); using standard translation
+2026-09-22 09:05:52,169 | WARNING | user_logger | Material mapping: no abaqus template for 55956 (default_4); using standard translation
+2026-09-22 09:05:52,172 | INFO | user_logger | ABAQUS contact 1: 56 slave / 12 master faces
+2026-09-22 09:05:52,173 | INFO | user_logger | ABAQUS translation finished
+2026-09-22 09:05:52,173 | INFO | user_logger | All Done
+
+2026-09-22 09:05:52,174 | INFO | user_logger | Default analysis step generated: D:\Work\WJD\P200_PyProject\Test_Data\data1_test_step.inp
+
+File Path:
+D:\Work\WJD\P200_PyProject\Test_Data\data1.k
+
+UNKNOWN KeyWords
+---------------------------------------
+*CONTROL_HOURGLASS
+$      IHQ        QH
+         8       0.1
+*DATABASE_SPCFORC
+$       DT    BINARY      LCUR     IOOPT
+*DATABASE_BINARY_RUNRSF
+$     CYCL        NR
+   19000.0          
+*DATABASE_NODFOR
+$       DT    BINARY      LCUR     IOOPT
+5.0000E-04         3                    
+*DATABASE_BINARY_D3DUMP
+$     CYCL        NR
+  300000.0          
+*DATABASE_BINARY_D3THDT
+$       DT      LCDT
+       5.0          
+-----------------------------------------
+
+data2.k
+
+2026-09-22 09:10:00,862 | WARNING | user_logger | Ls-Dyna not support keywords: *MAT_PIECEWISE_LINEAR_PLASTICITY
+2026-09-22 09:10:00,862 | WARNING | user_logger | Ls-Dyna not support keywords: *SET_PART_LIST_COLLECT_TITLE
+2026-09-22 09:10:01,005 | WARNING | user_logger | Material mapping: no abaqus template for 1800007 (default_1); using standard translation
+2026-09-22 09:10:01,005 | WARNING | user_logger | Material mapping: no abaqus template for 1900055 (default_2); using standard translation
+2026-09-22 09:10:01,005 | INFO | user_logger | Material mapping: 1900039 (S620_Alu_Gissmo) -> abaqus.minth_s620
+2026-09-22 09:10:01,005 | WARNING | user_logger | Material mapping: no abaqus template for 1800002 (Minal-6082T6_Main_eps_0p45); using standard translation
+2026-09-22 09:10:01,005 | WARNING | user_logger | Material mapping: no abaqus template for 1800009 (Al_welding_5356_eps_0p3); using standard translation
+2026-09-22 09:10:01,005 | WARNING | user_logger | Material mapping: no abaqus template for 1800003 (Minal-6082T6_HAZ_eps_0p3); using standard translation
+2026-09-22 09:10:01,005 | INFO | user_logger | Material mapping: 1900042 (S620_Alu_Gissmo_yield_stress_70_per) -> abaqus.minth_s620_haz
+2026-09-22 09:10:01,005 | WARNING | user_logger | Material mapping: no abaqus template for 1900056 (default_3); using standard translation
+2026-09-22 09:10:01,007 | INFO | user_logger | ABAQUS translation finished
+2026-09-22 09:10:01,042 | INFO | user_logger | All Done
+
+2026-09-22 09:10:01,043 | INFO | user_logger | History node output include generated: D:\Work\WJD\P200_PyProject\Test_Data\CMS_KIA_Front_QV_1_test_history_nodes.inc
+2026-09-22 09:10:01,043 | INFO | user_logger | Default analysis step generated: D:\Work\WJD\P200_PyProject\Test_Data\CMS_KIA_Front_QV_1_test_step.inp
+
+File Path:
+D:\Work\WJD\P200_PyProject\Test_Data\data2.k
+
+UNKNOWN KeyWords
+---------------------------------------
+*MAT_PIECEWISE_LINEAR_PLASTICITY
+$HMNAME MATERIAL   1800001Alu_6060                                              
+$HWCOLOR MATERIAL   1800001      25                                             
+$      MID       RHO         E        PR      SIGY      ETAN      FAIL      TDEL
+   18000012.7000E-06      70.0      0.33     0.197                 0.4          
+$        C         P      LCSS      LCSR        VP
+                       1900081                    
+$     EPS1      EPS2      EPS3      EPS4      EPS5      EPS6      EPS7      EPS8
+                                                                                
+$      ES1       ES2       ES3       ES4       ES5       ES6       ES7       ES8
+                                                                                
+*SET_PART_LIST_COLLECT_TITLE
+$NAME                                                                           
+Global_Contact                                                                  
+$      SID       DA1       DA2       DA3       DA4SOLVER    
+       101                                        MECH      
+   1800002   1800003   1800004   1800005   1800006   1800007   1800008   1800009
+   1800010   1800011   1800012   1800013   1800015   1800016   1800018   1800019																				
+-----------------------------------------					
+data3.k												
+
+2026-09-22 11:57:05,041 | WARNING | user_logger | Ls-Dyna not support keywords: *MAT_PIECEWISE_LINEAR_PLASTICITY_TITLE
+2026-09-22 11:57:05,125 | WARNING | user_logger | Ls-Dyna not support keywords: *MAT_PIECEWISE_LINEAR_PLASTICITY
+2026-09-22 11:57:05,125 | WARNING | user_logger | Ls-Dyna not support keywords: *MAT_ADD_DAMAGE_GISSMO_TITLE
+2026-09-22 11:57:05,125 | WARNING | user_logger | Ls-Dyna not support keywords: *CONTACT_SINGLE_EDGE_ID
+Traceback (most recent call last):
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\core\fea\abaqus\translator\element_translator.py", line 15, in translate
+    self.version[version]()
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\core\fea\abaqus\translator\element_translator.py", line 41, in _6p14
+    material_name = material_dict[mid].name
+KeyError: 30
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\services\fea_keywords_translator.py", line 227, in <module>
+    fea_keywords_translator.translate(file_path=file_path,
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\services\fea_keywords_translator.py", line 100, in translate
+    self._abaqus(version=version2,
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\services\fea_keywords_translator.py", line 139, in _abaqus
+    abaqus.translate(file_path=file_path,
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\core\fea\abaqus\abaqus.py", line 110, in translate
+    self.current_translator.translate(version=version)
+  File "D:\Work\WJD\P200_PyProject\circlecircle2\core\fea\abaqus\translator\element_translator.py", line 18, in translate
+    raise Exception(f"ABAQUS NodeTranslator ERROR: {e}") from e
+Exception: ABAQUS NodeTranslator ERROR: 30
+
+File Path:
+D:\Work\WJD\P200_PyProject\Test_Data\data3.k
+
+UNKNOWN KeyWords
+---------------------------------------
+*CONTACT_SINGLE_EDGE_ID
+$HWCOLOR GROUPS       6       7
+$      CIDHEADING                                                               
+         6contact_single_edge                                                   
+$     SSID      MSID     SSTYP     MSTYP    SBOXID    MBOXID       SPR       MPR
+  18000095         0         0         0                                        
+$       FS        FD        DC        VC       VDC    PENCHK        BT        DT
+       0.2       0.2                                                            
+$      SFS       SFM       SST       MST      SFST      SFMT       FSF       VSF
+       2.0       2.0                                                            
+*MAT_ADD_DAMAGE_GISSMO_TITLE
+$HMNAME MATERIALBEHAVIOR        40Failure Docol 1700M                                  
+$HWCOLOR MATERIALBEHAVIOR        40      59                                     
+Failure Docol 1700M                                                             
+$      MID                DTYP     REFSZ    NUMFIP
+   1820050                   1       0.0       2.0
+$    LCSDG     ECRIT    DMGEXP     DCRIT    FADEXP    LCREGD
+   1820050  -1820051   29.0498       1.0    3.2584   1820052
+$    LCSRS      SHRF     BIAXF    LCDLIM   MIDFAIL     HISVN      SOFT     LP2BI
+         0       1.0       1.0         0       0.0       0.0       0.0       2.0
+*MAT_PIECEWISE_LINEAR_PLASTICITY_TITLE
+$HWCOLOR MATERIAL        30      18                                             
+HC340-590DP                                                                     
+$      MID       RHO         E        PR      SIGY      ETAN      FAIL      TDEL
+        307.8000E-06     207.0       0.3       0.0       0.0       0.0       0.0
+$        C         P      LCSS      LCSR        VP       LCF
+       0.0       0.0        28         0       0.0          
+$     EPS1      EPS2      EPS3      EPS4      EPS5      EPS6      EPS7      EPS8
+                                                                                
+$      ES1       ES2       ES3       ES4       ES5       ES6       ES7       ES8
+                                                                                
+

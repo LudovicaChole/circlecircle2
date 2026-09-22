@@ -12,6 +12,9 @@ class ContactAutomaticSurfaceToSurfaceIDTitleParser(Parser):
         }
 
     def _12p0(self, line_raw):
+        if self.line_number >= 5:
+            return    # Ignore optional cards until the next keyword resets this parser.
+
         if self.line_number == 0:
             name_raw = line_raw.strip()
 
@@ -109,126 +112,126 @@ class ContactAutomaticSurfaceToSurfaceIDTitleParser(Parser):
             vsf_raw = line_raw[70:80].strip()
 
             name = name_raw
-            cid = cid_raw[1:] if cid_raw.startswith("&") else int(cid_raw)
-            heading = heading_raw[1:] if heading_raw.startswith("&") else heading_raw
+            cid = self.dataframe.parameter[cid_raw[1:]].value if cid_raw.startswith("&") else int(cid_raw)
+            heading = self.dataframe.parameter[heading_raw[1:]].value if heading_raw.startswith("&") else heading_raw
 
             if len(ssid_raw) > 0:
-                ssid = ssid_raw[1:] if ssid_raw.startswith("&") else int(ssid_raw)
+                ssid = self.dataframe.parameter[ssid_raw[1:]].value if ssid_raw.startswith("&") else int(ssid_raw)
             else:
                 ssid = 0
 
             if len(msid_raw) > 0:
-                msid = msid_raw[1:] if msid_raw.startswith("&") else int(msid_raw)
+                msid = self.dataframe.parameter[msid_raw[1:]].value if msid_raw.startswith("&") else int(msid_raw)
             else:
                 msid = 0
 
             if len(sstyp_raw) > 0:
-                sstyp = sstyp_raw[1:] if sstyp_raw.startswith("&") else int(sstyp_raw)
+                sstyp = self.dataframe.parameter[sstyp_raw[1:]].value if sstyp_raw.startswith("&") else int(sstyp_raw)
             else:
                 sstyp = 0
 
             if len(mstyp_raw) > 0:
-                mstyp = mstyp_raw[1:] if mstyp_raw.startswith("&") else int(mstyp_raw)
+                mstyp = self.dataframe.parameter[mstyp_raw[1:]].value if mstyp_raw.startswith("&") else int(mstyp_raw)
             else:
                 mstyp = 0
 
             if len(sboxid_raw) > 0:
-                sboxid = sboxid_raw[1:] if sboxid_raw.startswith("&") else int(sboxid_raw)
+                sboxid = self.dataframe.parameter[sboxid_raw[1:]].value if sboxid_raw.startswith("&") else int(sboxid_raw)
             else:
                 sboxid = 0.0
 
             if len(mboxid_raw) > 0:
-                mboxid = mboxid_raw[1:] if mboxid_raw.startswith("&") else int(mboxid_raw)
+                mboxid = self.dataframe.parameter[mboxid_raw[1:]].value if mboxid_raw.startswith("&") else int(mboxid_raw)
             else:
                 mboxid = 0.0
 
             if len(spr_raw) > 0:
-                spr = spr_raw[1:] if spr_raw.startswith("&") else float(spr_raw)
+                spr = self.dataframe.parameter[spr_raw[1:]].value if spr_raw.startswith("&") else float(spr_raw)
             else:
                 spr = 0.0
 
             if len(mpr_raw) > 0:
-                mpr = mpr_raw[1:] if mpr_raw.startswith("&") else float(mpr_raw)
+                mpr = self.dataframe.parameter[mpr_raw[1:]].value if mpr_raw.startswith("&") else float(mpr_raw)
             else:
                 mpr = 0.0
 
             if len(fs_raw) > 0:
-                fs = fs_raw[1:] if fs_raw.startswith("&") else float(fs_raw)
+                fs = self.dataframe.parameter[fs_raw[1:]].value if fs_raw.startswith("&") else float(fs_raw)
             else:
                 fs = 0.0
 
             if len(fd_raw) > 0:
-                fd = fd_raw[1:] if fd_raw.startswith("&") else float(fd_raw)
+                fd = self.dataframe.parameter[fd_raw[1:]].value if fd_raw.startswith("&") else float(fd_raw)
             else:
                 fd = 0.0
 
             if len(dc_raw) > 0:
-                dc = dc_raw[1:] if dc_raw.startswith("&") else float(dc_raw)
+                dc = self.dataframe.parameter[dc_raw[1:]].value if dc_raw.startswith("&") else float(dc_raw)
             else:
                 dc = 0.0
 
             if len(vc_raw) > 0:
-                vc = vc_raw[1:] if vc_raw.startswith("&") else float(vc_raw)
+                vc = self.dataframe.parameter[vc_raw[1:]].value if vc_raw.startswith("&") else float(vc_raw)
             else:
                 vc = 0.0
 
             if len(vdc_raw) > 0:
-                vdc = vdc_raw[1:] if vdc_raw.startswith("&") else float(vdc_raw)
+                vdc = self.dataframe.parameter[vdc_raw[1:]].value if vdc_raw.startswith("&") else float(vdc_raw)
             else:
                 vdc = 0.0
 
             if len(penchk_raw) > 0:
-                penchk = penchk_raw[1:] if penchk_raw.startswith("&") else float(penchk_raw)
+                penchk = self.dataframe.parameter[penchk_raw[1:]].value if penchk_raw.startswith("&") else float(penchk_raw)
             else:
                 penchk = 0.0
 
             if len(bt_raw) > 0:
-                bt = bt_raw[1:] if bt_raw.startswith("&") else float(bt_raw)
+                bt = self.dataframe.parameter[bt_raw[1:]].value if bt_raw.startswith("&") else float(bt_raw)
             else:
                 bt = 0.0
 
             if len(dt_raw) > 0:
-                dt = dt_raw[1:] if dt_raw.startswith("&") else float(dt_raw)
+                dt = self.dataframe.parameter[dt_raw[1:]].value if dt_raw.startswith("&") else float(dt_raw)
             else:
                 dt = 0.0
 
             if len(sfs_raw) > 0:
-                sfs = sfs_raw[1:] if sfs_raw.startswith("&") else float(sfs_raw)
+                sfs = self.dataframe.parameter[sfs_raw[1:]].value if sfs_raw.startswith("&") else float(sfs_raw)
             else:
                 sfs = 0.0
 
             if len(sfm_raw) > 0:
-                sfm = sfm_raw[1:] if sfm_raw.startswith("&") else float(sfm_raw)
+                sfm = self.dataframe.parameter[sfm_raw[1:]].value if sfm_raw.startswith("&") else float(sfm_raw)
             else:
                 sfm = 0.0
 
             if len(sst_raw) > 0:
-                sst = sst_raw[1:] if sst_raw.startswith("&") else float(sst_raw)
+                sst = self.dataframe.parameter[sst_raw[1:]].value if sst_raw.startswith("&") else float(sst_raw)
             else:
                 sst = 0.0
 
             if len(mst_raw) > 0:
-                mst = mst_raw[1:] if mst_raw.startswith("&") else float(mst_raw)
+                mst = self.dataframe.parameter[mst_raw[1:]].value if mst_raw.startswith("&") else float(mst_raw)
             else:
                 mst = 0.0
 
             if len(sfst_raw) > 0:
-                sfst = sfst_raw[1:] if sfst_raw.startswith("&") else float(sfst_raw)
+                sfst = self.dataframe.parameter[sfst_raw[1:]].value if sfst_raw.startswith("&") else float(sfst_raw)
             else:
                 sfst = 0.0
 
             if len(sfmt_raw) > 0:
-                sfmt = sfmt_raw[1:] if sfmt_raw.startswith("&") else float(sfmt_raw)
+                sfmt = self.dataframe.parameter[sfmt_raw[1:]].value if sfmt_raw.startswith("&") else float(sfmt_raw)
             else:
                 sfmt = 0.0
 
             if len(fsf_raw) > 0:
-                fsf = fsf_raw[1:] if fsf_raw.startswith("&") else float(fsf_raw)
+                fsf = self.dataframe.parameter[fsf_raw[1:]].value if fsf_raw.startswith("&") else float(fsf_raw)
             else:
                 fsf = 0.0
 
             if len(vsf_raw) > 0:
-                vsf = vsf_raw[1:] if vsf_raw.startswith("&") else float(vsf_raw)
+                vsf = self.dataframe.parameter[vsf_raw[1:]].value if vsf_raw.startswith("&") else float(vsf_raw)
             else:
                 vsf = 0.0
 
@@ -268,16 +271,16 @@ class ContactAutomaticSurfaceToSurfaceIDTitleParser(Parser):
             self.dataframe.contact_automatic_surface_to_surface_id[cid].ss = ss
             self.dataframe.contact_automatic_surface_to_surface_id[cid].ms = ms
 
-            self.reset()
+            self.line_number = 5
 
             return
 
     def check_contact_type(self, c_id, c_type):
         if c_type == 0:
-            return None
+            return self.dataframe.set_segment.get(c_id)
 
         elif c_type == 1:
-            return None
+            return self.dataframe.set_shell_list.get(c_id)
 
         elif c_type == 2:
             if c_id in self.dataframe.set_part_list:

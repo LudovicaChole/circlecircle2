@@ -1,3 +1,4 @@
+from utilities.logger import logger
 from core.fea.translator import Translator
 
 
@@ -9,15 +10,15 @@ class MaterialTranslator(Translator):
             "6.14": self._6p14,
         }
 
-    def translate(self, version):
+    def translate(self, version, material_mapping=None):
         try:
             if version in self.version:
-                self.version[version]()
+                self.version[version](material_mapping)
 
         except Exception as e:
             raise Exception(f"ABAQUS NodeTranslator ERROR: {e}") from e
 
-    def _6p14(self):
+    def _6p14(self, material_mapping=None):
         if len(self.dataframe.material) > 0:
             part_dict = self.dataframe.part
             material_dict = self.dataframe.material
@@ -47,6 +48,12 @@ class MaterialTranslator(Translator):
                     continue
                 else:
                     temp_material_set.add(mid)
+
+                    if material_mapping is not None:
+                        mapped_material = material_mapping.render(material, mid)
+                        if mapped_material is not None:
+                            output_storge.append(mapped_material)
+                            continue
 
                     if material_tag == "elastic" or material_tag == "rigid":
                         output_storge.append(
@@ -84,7 +91,24 @@ class MaterialTranslator(Translator):
                                                     curve_dict=curve_dict,
                                                     output_storge=output_storge)
                         else:
-                            pass
+                            if lcss:
+                                raise ValueError(f'Material {mid}: missing stress/strain curve or table {lcss}')
+                            points = [(getattr(material, f'eps{i}', 0), getattr(material, f'es{i}', 0)) for i in range(1,9)]
+                            points = [(strain, stress) for strain, stress in points if stress > 0]
+                            if not points:
+                                yield_stress = getattr(material, 'sigy', 0)
+                                tangent = getattr(material, 'etan', 0)
+                                if yield_stress <= 0:
+                                    raise ValueError(f'Material {mid}: no positive yield stress or plastic curve')
+                                points = [(0.0, yield_stress)]
+                                if tangent:
+                                    if tangent < 0 or tangent >= e:
+                                        raise ValueError(f'Material {mid}: ETAN must satisfy 0 <= ETAN < E')
+                                    points.append((1.0, yield_stress + e*tangent/(e-tangent)))
+                            if points[0][0] != 0 or any(b[0] <= a[0] for a,b in zip(points,points[1:])):
+                                raise ValueError(f'Material {mid}: plastic strain must start at zero and strictly increase')
+                            output_storge.append('*PLASTIC\n')
+                            output_storge.extend(f'{stress}, {strain}\n' for strain,stress in points)
 
     def combine_curve_data(self, lcss_id, curve_dict, output_storge):
         curve = curve_dict[lcss_id]
@@ -100,7 +124,7 @@ class MaterialTranslator(Translator):
             a1 = (curve.a1[item_index] + offa) * sfa
             o1 = (curve.o1[item_index] + offo) * sfo
 
-            output_storge.append(f"{a1:<20},{o1:<20}\n")
+            output_storge.append(f"{o1:<20},{a1:<20}\n")
 
     def check_tabel_curve(self, lcss_id, curve_dict, table_dict):
         if lcss_id in curve_dict:

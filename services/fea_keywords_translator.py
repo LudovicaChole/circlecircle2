@@ -3,6 +3,7 @@ from utilities.logger import logger
 from core.fea.dataframe import dataframe
 from core.fea.lsdyna.lsdyna import LsDyna
 from core.fea.abaqus.abaqus import Abaqus
+from core.fea.abaqus.translator.step_translator import StepTranslator
 from core.fea.pamcrash.pamcrash import PamCrash
 
 
@@ -25,6 +26,8 @@ class FeaKeywordsTranslator:
         :param version1:
         :param solver2: translate solver
         :param version2:
+        :param material_mapping: use matching target-solver material templates when True
+        :param material_mapping_file_path: JSON file or directory containing material_mapping.json
         :return:
         """
         self.reset()
@@ -36,6 +39,19 @@ class FeaKeywordsTranslator:
         version2 = kwargs.get("version2", args[4] if len(args) > 4 else None)
         material_mapping = kwargs.get("material_mapping", args[5] if len(args) > 5 else None)
         material_mapping_file_path = kwargs.get("material_mapping_file_path", args[6] if len(args) > 6 else None)
+        solver1 = self.normalize_solver(solver1)
+        solver2 = self.normalize_solver(solver2)
+
+        if not file_path or not os.path.isfile(file_path):
+            raise ValueError(f'Source file does not exist: {file_path}')
+        supported = {'lsdyna': {'12.0','13.0'}, 'abaqus': {'6.14'}, 'pamcrash': {'2020'}}
+        targets = {'lsdyna': set(), 'abaqus': {'6.14'}, 'pamcrash': {'2020','2023'}}
+        if solver1 not in supported or version1 not in supported[solver1]:
+            raise ValueError(f'Unsupported source solver/version: {solver1} {version1}')
+        if solver2 != 'parse_only' and (solver2 not in targets or version2 not in targets[solver2]):
+            raise ValueError(f'Unsupported target solver/version: {solver2} {version2}')
+        if solver1 == solver2:
+            raise ValueError('Source and target solvers must be different')
 
         folder, basename, file_name, file_extension = self.disassemble_file_path(file_path=file_path)
         self.work_folder = folder
@@ -102,7 +118,7 @@ class FeaKeywordsTranslator:
                                       f"current abaqus version {version2} not supported\n")
 
             elif solver2 == "pamcrash":
-                if version2 in ["2020"]:
+                if version2 in ["2020", "2023"]:
                     self._pamcrash(version=version2,
                                    file_path=file_path,
                                    mode="translate",
@@ -138,9 +154,11 @@ class FeaKeywordsTranslator:
 
             folder, basename, file_name, file_extension = self.disassemble_file_path(file_path=file_path)
 
-            new_file_path = os.path.join(folder, file_name + "_test.inp")
-
-            self.write_file(file_path=new_file_path)
+            model_path = os.path.join(folder, file_name + "_test.geo")
+            # Validate all step data before writing either of the two deliverables.
+            step_lines = StepTranslator().translate(version=version)
+            self.write_file(file_path=model_path)
+            self.write_step_file(model_file_path=model_path, version=version, lines=step_lines)
 
     def _pamcrash(self, version, file_path, mode, material_mapping, material_mapping_file_path):
         pamcrash = PamCrash()
@@ -160,10 +178,26 @@ class FeaKeywordsTranslator:
 
             self.write_file(file_path=new_file_path)
 
+    def write_step_file(self, model_file_path, version, lines=None):
+        folder = os.path.dirname(model_file_path)
+        stem = os.path.splitext(os.path.basename(model_file_path))[0]
+        step_path = os.path.join(folder, stem + ".inp")
+        if os.path.abspath(step_path) == os.path.abspath(model_file_path):
+            raise ValueError("Model filename must use .geo, distinct from the launch .inp")
+        if lines is None:
+            lines = StepTranslator().translate(version=version)
+        with open(step_path, mode="w", encoding="utf-8") as f:
+            f.write(f'*INCLUDE, INPUT="{os.path.basename(model_file_path)}"\n')
+            f.writelines(lines)
+        self.logger.info(f"Analysis launch file generated: {step_path}")
+        return step_path
+
     def write_file(self, file_path):
         if len(self.dataframe.output_storge) > 0:
             with open(file_path, mode="w", encoding="utf-8", errors="ignore") as f:
                 for keyword, content in self.dataframe.output_storge.items():
+                    if keyword == "*STEP_CONTACT":
+                        continue
                     for line in content:
                         f.write(line)
 
@@ -171,6 +205,10 @@ class FeaKeywordsTranslator:
 
         else:
             self.logger.warning(f"FEA KEYWORDS TRANSLATOR WARNING: no data need to translate\n")
+
+    @staticmethod
+    def normalize_solver(solver):
+        return str(solver).strip().lower().replace("-", "").replace(" ", "")
 
     def disassemble_file_path(self, file_path):
         folder = os.path.dirname(file_path)
@@ -183,19 +221,19 @@ class FeaKeywordsTranslator:
 fea_keywords_translator = FeaKeywordsTranslator()
 
 
-# if __name__ == '__main__':
-#     file_path = r"E:\PythonProject\test_hwx\test_model.k"
-#     material_mapping_file_path = r"E:\PythonProject\test_hwx\material_mapping.json"
-#     # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_model.inp"
-#     # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_.pc"
-#
-#     fea_keywords_translator.translate(file_path=file_path,
-#                                       solver1="lsdyna",
-#                                       version1="12.0",
-#                                       solver2="abaqus",
-#                                       version2="6.14",
-#                                       material_mapping=True,
-#                                       material_mapping_file_path=material_mapping_file_path)
+if __name__ == '__main__':
+    file_path = r"C:\Users\jiand\PycharmProjects\circlecircle2\Test_Items\data3.k"
+    material_mapping_file_path = r"C:\Users\jiand\PycharmProjects\circlecircle2\Test_Items\material_mapping.json"
+    # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_model.inp"
+    # file_path = r"C:\Users\jiand\Downloads\Test_Data\test_.pc"
+
+    fea_keywords_translator.translate(file_path=file_path,
+                                      solver1="lsdyna",
+                                      version1="12.0",
+                                      solver2="abaqus",
+                                      version2="6.14",
+                                      material_mapping=True,
+                                      material_mapping_file_path=material_mapping_file_path)
 #
 #     d = fea_keywords_translator.dataframe
     # print(d.define_curve)

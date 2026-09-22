@@ -17,6 +17,9 @@ class MaterialMapper:
             a1 = curve.a1
             o1 = curve.o1
 
+            if min(len(a1), len(o1)) < 5:
+                return (0,) * 10
+
             x1 = round((a1[0] - offa) * sfa, 10)
             x2 = round((a1[1] - offa) * sfa, 10)
             x3 = round((a1[2] - offa) * sfa, 10)
@@ -53,7 +56,7 @@ class MaterialMapper:
 
         sorted_indices = sorted(range(len(value)), key=lambda i: value[i])
 
-        return lcid[sorted_indices[0]]
+        return lcid[sorted_indices[0]] if sorted_indices else None
 
     def map_material(self, lcss_id):
         lcss_id = abs(lcss_id)    # hard id: -2000 means curve id: 2000 in keywords

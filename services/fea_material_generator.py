@@ -1,3 +1,4 @@
+from pathlib import Path
 import json
 from utilities.logger import logger
 
@@ -16,10 +17,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 200.0,\n"
-                f"0.01, 201.2, \n"
-                f"0.02, 202.2, \n"
-                f"0.04, 210.5, \n"
+                f"200.0, 0.0,\n"
+                f"201.2, 0.01, \n"
+                f"202.2, 0.02, \n"
+                f"210.5, 0.04, \n"
             ,
             "minth_s620_haz":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -28,10 +29,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 180.0,\n"
-                f"0.01, 181.2, \n"
-                f"0.02, 182.2, \n"
-                f"0.04, 190.5, \n"
+                f"180.0, 0.0,\n"
+                f"181.2, 0.01, \n"
+                f"182.2, 0.02, \n"
+                f"190.5, 0.04, \n"
             ,
             "minth_s624":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -40,10 +41,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 240.0,\n"
-                f"0.02, 241.2, \n"
-                f"0.03, 242.2, \n"
-                f"0.05, 240.5, \n"
+                f"240.0, 0.0,\n"
+                f"241.2, 0.02, \n"
+                f"242.2, 0.03, \n"
+                f"240.5, 0.05, \n"
             ,
             "minth_s624_haz":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -52,10 +53,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 210.0,\n"
-                f"0.02, 211.2, \n"
-                f"0.03, 212.2, \n"
-                f"0.05, 213.5, \n"
+                f"210.0, 0.0,\n"
+                f"211.2, 0.02, \n"
+                f"212.2, 0.03, \n"
+                f"213.5, 0.05, \n"
             ,
             "minth_s628":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -64,10 +65,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 280.0,\n"
-                f"0.02, 281.2, \n"
-                f"0.03, 282.2, \n"
-                f"0.05, 280.5, \n"
+                f"280.0, 0.0,\n"
+                f"281.2, 0.02, \n"
+                f"282.2, 0.03, \n"
+                f"280.5, 0.05, \n"
             ,
             "minth_s628_haz":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -76,10 +77,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 260.0,\n"
-                f"0.02, 261.2, \n"
-                f"0.03, 262.2, \n"
-                f"0.05, 264.5, \n"
+                f"260.0, 0.0,\n"
+                f"261.2, 0.02, \n"
+                f"262.2, 0.03, \n"
+                f"264.5, 0.05, \n"
             ,
             "minth_s632":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -88,10 +89,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 320.0,\n"
-                f"0.02, 321.2, \n"
-                f"0.03, 322.2, \n"
-                f"0.05, 325.5, \n"
+                f"320.0, 0.0,\n"
+                f"321.2, 0.02, \n"
+                f"322.2, 0.03, \n"
+                f"325.5, 0.05, \n"
             ,
             "minth_s632_haz":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -100,10 +101,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 300.0,\n"
-                f"0.02, 301.2, \n"
-                f"0.03, 302.2, \n"
-                f"0.05, 305.5, \n"
+                f"300.0, 0.0,\n"
+                f"301.2, 0.02, \n"
+                f"302.2, 0.03, \n"
+                f"305.5, 0.05, \n"
             ,
             "minth_s636":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -112,10 +113,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 360.0,\n"
-                f"0.02, 361.2, \n"
-                f"0.03, 362.2, \n"
-                f"0.05, 365.5, \n"
+                f"360.0, 0.0,\n"
+                f"361.2, 0.02, \n"
+                f"362.2, 0.03, \n"
+                f"365.5, 0.05, \n"
             ,
             "minth_s636_haz":
                 f"*MATERIAL, NAME={self.material_name}\n"
@@ -124,10 +125,10 @@ class MaterialGenerator:
                 f"*ELASTIC, TYPE = ISOTROPIC\n"
                 f"70.0, 0.3, 0.0\n"
                 f"*PLASTIC\n"
-                f"0.0, 340.0,\n"
-                f"0.02, 341.2, \n"
-                f"0.03, 342.2, \n"
-                f"0.05, 345.5, \n"
+                f"340.0, 0.0,\n"
+                f"341.2, 0.02, \n"
+                f"342.2, 0.03, \n"
+                f"345.5, 0.05, \n"
             ,
         }
 
@@ -304,6 +305,10 @@ class MaterialGenerator:
                 f"                END\n",
         }
 
+        # Source values and referenced curves retained from Test_Items/data1-3.k.
+        source_templates = Path(__file__).resolve().parents[1] / "core/fea/lsdyna/source_material_templates.json"
+        self.lsdyna_material.update(json.loads(source_templates.read_text(encoding="utf-8")))
+
     def generate(self, file_path):
         all_material = {
             "abaqus": self.abaqus_material,
@@ -314,7 +319,7 @@ class MaterialGenerator:
         with open(file_path, mode="w", encoding="utf-8", errors="ignore") as f:
             json.dump(all_material, f, ensure_ascii=False, indent=4)
 
-        self.logger.info(f"Material Mapping File Generated: {material_mapping_file_path}\n")
+        self.logger.info(f"Material Mapping File Generated: {file_path}\n")
 
 
 material_generator = MaterialGenerator()

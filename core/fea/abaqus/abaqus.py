@@ -1,4 +1,8 @@
+from core.fea.dataframe import dataframe
+from core.fea.abaqus.translator.initial_state_translator import InitialStateTranslator
 from utilities.logger import logger
+from core.fea.abaqus.translator.history_node_translator import HistoryNodeTranslator
+from core.fea.abaqus.translator.contact_pair_translator import ContactPairTranslator
 from core.fea.solver import Solver
 from core.fea.abaqus.parser.node_parser import NodeParser
 from core.fea.abaqus.translator.user_head_note_translator import UserHeadNoteTranslator
@@ -27,7 +31,10 @@ class Abaqus(Solver):
             "*SHELL_SECTION": ShellSectionTranslator(),
             "*SOLID_SECTION": SolidSectionTranslator(),
             "*KINEMATIC_COUPLING": KinematicCouplingTranslator(),
+            "*CONTACT PAIR": ContactPairTranslator(),
             "*BOUNDARY": BoundaryTranslator(),
+            "*HISTORY_NODE": HistoryNodeTranslator(),
+            "*INITIAL_STATE": InitialStateTranslator(),
         }
 
         self.translate_keywords_mapping = {
@@ -38,7 +45,10 @@ class Abaqus(Solver):
             "*SHELL_SECTION": ShellSectionTranslator(),
             "*SOLID_SECTION": SolidSectionTranslator(),
             "*KINEMATIC_COUPLING": KinematicCouplingTranslator(),
+            "*CONTACT PAIR": ContactPairTranslator(),
             "*BOUNDARY": BoundaryTranslator(),
+            "*HISTORY_NODE": HistoryNodeTranslator(),
+            "*INITIAL_STATE": InitialStateTranslator(),
         }
 
         self.not_support_keywords = set()
@@ -107,6 +117,14 @@ class Abaqus(Solver):
                     self.current_translator = translator
                     self.current_translator.translate(version=version)
 
+            notices = []
+            for key in ('mat_add_damage_gissmo', 'contact_single_edge_id', 'contact_automatic_single_surface_id'):
+                if dataframe.storge.get(key):
+                    notice = f'{key}: parsed source data retained, but no equivalent Abaqus conversion implemented'
+                    self.logger.warning(notice)
+                    notices.append('** CONVERSION LIMITATION: ' + notice + '\n')
+            if notices:
+                dataframe.output_storge['**LIMITATIONS'] = notices
             self.logger.info(f"ABAQUS translation finished")
 
         else:

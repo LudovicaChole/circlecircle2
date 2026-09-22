@@ -1,4 +1,20 @@
+import re
+from core.fea.lsdyna.parser.set_solid_list_parser import SetSolidListParser
+from core.fea.lsdyna.parser.set_solid_list_title_parser import SetSolidListTitleParser
+from core.fea.lsdyna.parser.database_nodfor_parser import DatabaseNodforParser
+from core.fea.lsdyna.parser.database_spcforc_parser import DatabaseSpcforcParser
+from core.fea.lsdyna.parser.control_hourglass_parser import ControlHourglassParser
+from core.fea.lsdyna.parser.database_binary_d3dump_parser import DatabaseBinaryD3DumpParser
+from core.fea.lsdyna.parser.database_binary_runrsf_parser import DatabaseBinaryRunrsfParser
+from core.fea.lsdyna.parser.database_binary_d3thdt_parser import DatabaseBinaryD3ThdtParser
+from core.fea.lsdyna.parser.mat_piecewise_linear_plasticity_parser import MatPiecewiseLinearPlasticityParser
+from core.fea.lsdyna.parser.mat_piecewise_linear_plasticity_title_parser import MatPiecewiseLinearPlasticityTitleParser
+from core.fea.lsdyna.parser.element_mass_parser import ElementMassParser
+from core.fea.lsdyna.parser.mat_add_damage_gissmo_title_parser import MatAddDamageGissmoTitleParser
+from core.fea.lsdyna.parser.set_part_list_collect_title_parser import SetPartListCollectTitleParser
+from core.fea.lsdyna.parser.contact_single_edge_id_parser import ContactSingleEdgeIDParser
 from utilities.logger import logger
+from core.fea.lsdyna.parser.set_segment_parser import SetSegmentParser
 from core.fea.solver import Solver
 from core.fea.lsdyna.parser.keyword_parser import KeyWordParser
 from core.fea.lsdyna.parser.parameter_parser import ParameterParser
@@ -99,6 +115,8 @@ class LsDyna(Solver):
         }
 
         self.parse_keywords_1 = {
+            "*SET_SOLID_LIST": SetSolidListParser(),
+            "*SET_SOLID_LIST_TITLE": SetSolidListTitleParser(),
             "*KEYWORD": KeyWordParser(),
             "*NODE": NodeParser(),
             "*SECTION_SHELL": SectionShellParser(),
@@ -109,6 +127,8 @@ class LsDyna(Solver):
             "*HOURGLASS_TITLE": HourglassTitleParser(),
             "*SET_NODE_LIST": SetNodeListParser(),
             "*SET_NODE_LIST_TITLE": SetNodeListTitleParser(),
+            "*SET_SEGMENT": SetSegmentParser(),
+            "*SET_SEGMENT_TITLE": SetSegmentParser(title=True),
             "*SET_SHELL_LIST": SetShellListParser(),
             "*SET_SHELL_LIST_TITLE": SetShellListTitleParser(),
             "*SET_PART_LIST": SetPartListParser(),
@@ -189,6 +209,22 @@ class LsDyna(Solver):
             "*CONTACT_AUTOMATIC_SINGLE_SURFACE_ID_TITLE": ContactAutomaticSingleSurfaceIDTitleParser(),
             "*CONTACT_TIED_NODES_TO_SURFACE_OFFSET_ID": ContactTiedNodesToSurfaceOffsetIDParser(),
         }
+        self.parse_keywords_2.update({
+            "*DATABASE_NODFOR": DatabaseNodforParser(),
+            "*DATABASE_SPCFORC": DatabaseSpcforcParser(),
+            "*CONTROL_HOURGLASS": ControlHourglassParser(),
+            "*DATABASE_BINARY_D3DUMP": DatabaseBinaryD3DumpParser(),
+            "*DATABASE_BINARY_RUNRSF": DatabaseBinaryRunrsfParser(),
+            "*DATABASE_BINARY_D3THDT": DatabaseBinaryD3ThdtParser(),
+            "*MAT_PIECEWISE_LINEAR_PLASTICITY": MatPiecewiseLinearPlasticityParser(),
+            "*MAT_PIECEWISE_LINEAR_PLASTICITY_TITLE": MatPiecewiseLinearPlasticityTitleParser(),
+            "*ELEMENT_MASS": ElementMassParser(),
+            "*MAT_ADD_DAMAGE_GISSMO_TITLE": MatAddDamageGissmoTitleParser(),
+            "*SET_PART_LIST_COLLECT_TITLE": SetPartListCollectTitleParser(),
+            "*CONTACT_SINGLE_EDGE_ID": ContactSingleEdgeIDParser(),
+            "*MAT_ADD_DAMAGE_GISSMO": MatAddDamageGissmoTitleParser(title=False),
+        })
+        self.parse_keywords_1["*SET_PART_LIST_COLLECT_TITLE"] = self.parse_keywords_2.pop("*SET_PART_LIST_COLLECT_TITLE")
         self.translate_keywords = {}
         self.not_support_keywords = set()
 
@@ -206,12 +242,19 @@ class LsDyna(Solver):
         if file_path:
             with open(file=file_path, mode="r", encoding="utf-8", errors="ignore") as f:
                 try:
+                    set_label = None
                     for line in f:
 
-                        if not line or line.startswith("$"):
+                        if line.startswith('$'):
+                            match = re.match(r'^\$HMNAME\s+SETS\s+(\d+)(.*)', line)
+                            if match:
+                                set_label = (int(match[1]),match[2].strip())
+                            continue
+                        if not line:
                             continue
 
                         if line.startswith("*"):
+                            set_label = None
                             dyna_keyword = line.split()[0].strip().upper()
 
                             if dyna_keyword in parse_keywords:
@@ -253,6 +296,11 @@ class LsDyna(Solver):
                         else:
                             if self.current_parser is not None:
                                 self.current_parser.parse(line_raw=line, version=version)
+                                if set_label and dyna_keyword.startswith('*SET_'):
+                                    family = dyna_keyword.split('_')[1].lower()
+                                    store = self.current_parser.dataframe.storge.get(f'set_{family}_list',{})
+                                    if set_label[0] in store and set_label[1]:
+                                        store[set_label[0]].name = set_label[1]
 
                 except Exception as e:
                     raise e
