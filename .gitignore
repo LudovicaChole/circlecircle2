@@ -1,0 +1,12 @@
+# License issuer secrets are never part of an application distribution.
+work/license_issuer/
+config/*.lic
+config/profile.setting
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+config/license_issuer/
+
+build/
+dist/

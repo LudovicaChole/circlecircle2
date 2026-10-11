@@ -1,0 +1,5 @@
+{
+  "lsdyna": "KG/mm/ms/J",
+  "abaqus": "tonne/mm/s/N-mm",
+  "pamcrash": "g/mm/ms/N-mm"
+}
