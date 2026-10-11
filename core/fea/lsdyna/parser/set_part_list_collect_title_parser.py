@@ -1,12 +1,12 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.set_part_list import SetPartList
+from core.fea.model.lsdyna.set_part_list import SetPartList
 from .card_fields import fields, number
 
 
 class SetPartListCollectTitleParser(Parser):
     def __init__(self):
         super().__init__()
-        self.version = {"12.0": self._read, "13.0": self._read}
+        self.version = {"12.0": self._read, "13.0": self._read, "16.0": self._read}
 
     def _read(self, line_raw):
         if self.line_number == 0:

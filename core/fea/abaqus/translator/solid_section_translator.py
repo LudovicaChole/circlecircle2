@@ -6,7 +6,7 @@ class SolidSectionTranslator(Translator):
         super().__init__()
 
         self.version = {
-            "6.14": self._6p14,
+            "6.14": self._6p14, "2024": self._6p14,
         }
 
     def translate(self, version):
@@ -28,6 +28,8 @@ class SolidSectionTranslator(Translator):
             output_storge = self.dataframe.output_storge.setdefault("*SOLID_SECTION", [])
 
             for pid, part in part_dict.items():
+                if not self.dataframe.storge_part_element.get(pid):
+                    continue
                 mid = part_dict[pid].mid
                 material_name = material_dict[mid].name
                 secid = part_dict[pid].secid
@@ -43,7 +45,7 @@ class SolidSectionTranslator(Translator):
 
                         output_storge.append(f"*SOLID SECTION, "
                                              f"ELSET={property_name}, "
-                                             f"MATERIAL={material_name}\n")
+                                             f"MATERIAL={material_name}\n,\n")
 
                         temp_section_name.add(property_name)
 

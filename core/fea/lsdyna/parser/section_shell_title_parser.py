@@ -1,5 +1,6 @@
+from core.fea.lsdyna.parser.card_fields import fields, number
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.section_shell import SectionShell
+from core.fea.model.lsdyna.section_shell import SectionShell
 
 
 class SectionShellTitleParser(Parser):
@@ -8,7 +9,7 @@ class SectionShellTitleParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -21,10 +22,10 @@ class SectionShellTitleParser(Parser):
             return
 
         if self.line_number == 1:
-            secid_raw = line_raw[0:10].strip()
-            elform_raw = line_raw[10:20].strip()
-            shrf_raw = line_raw[20:30].strip()
-            nip_raw = line_raw[30:40].strip()
+            secid_raw = fields(line_raw)[0]
+            elform_raw = fields(line_raw)[1]
+            shrf_raw = fields(line_raw)[2]
+            nip_raw = fields(line_raw)[3]
 
             self.temp.append(secid_raw)
             self.temp.append(elform_raw)
@@ -41,38 +42,37 @@ class SectionShellTitleParser(Parser):
             shrf_raw = self.temp[3]
             nip_raw = self.temp[4]
 
-            t1_raw = line_raw[0:10].strip()
-            t2_raw = line_raw[10:20].strip()
-            t3_raw = line_raw[20:30].strip()
-            t4_raw = line_raw[30:40].strip()
+            t1_raw = fields(line_raw)[0]
+            t2_raw = fields(line_raw)[1]
+            t3_raw = fields(line_raw)[2]
+            t4_raw = fields(line_raw)[3]
 
             name = name_raw
 
             if len(secid_raw) > 0:
-                secid = self.dataframe.parameter[secid_raw[1:]].value if secid_raw.startswith("&") else int(secid_raw)
+                secid = number(secid_raw, self.dataframe, integer=True)
             else:
                 secid = 0
 
             if len(elform_raw) > 0:
-                elform = self.dataframe.parameter[elform_raw[1:]].value if elform_raw.startswith("&") else int(
-                    elform_raw)
+                elform = number(elform_raw, self.dataframe, integer=True)
             else:
                 elform = 0
 
             if len(shrf_raw) > 0:
-                shrf = self.dataframe.parameter[shrf_raw[1:]].value if shrf_raw.startswith("&") else float(shrf_raw)
+                shrf = number(shrf_raw, self.dataframe, integer=False)
             else:
-                shrf = 0.833
+                shrf = 1.0
 
             if len(nip_raw) > 0:
-                nip = self.dataframe.parameter[nip_raw[1:]].value if nip_raw.startswith("&") else int(nip_raw)
+                nip = number(nip_raw, self.dataframe, integer=False)
             else:
-                nip = 5
+                nip = 2
 
-            t1 = t1_raw[1:] if t1_raw.startswith("&") else float(t1_raw)
-            t2 = t2_raw[1:] if t2_raw.startswith("&") else float(t2_raw)
-            t3 = t3_raw[1:] if t3_raw.startswith("&") else float(t3_raw)
-            t4 = t4_raw[1:] if t4_raw.startswith("&") else float(t4_raw)
+            t1 = number(t1_raw, self.dataframe, default=0)
+            t2 = number(t2_raw, self.dataframe, default=t1)
+            t3 = number(t3_raw, self.dataframe, default=t1)
+            t4 = number(t4_raw, self.dataframe, default=t1)
 
             self.dataframe.section_shell[secid] = SectionShell(uid=secid,
                                                                elform=elform,

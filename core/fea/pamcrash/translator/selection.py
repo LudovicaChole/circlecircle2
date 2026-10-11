@@ -1,7 +1,4 @@
-"""PAM entity selections. Card layouts follow the supplied PAM examples.
-
-The vendor's 2023 keyword manual was not available for independent verification.
-"""
+"""PAM selections: space-separated IDs, following the sample and HM sets_format."""
 import math
 from core.fea.lsdyna.parser.card_fields import number
 
@@ -31,7 +28,9 @@ def selection(kind, values):
         raise ValueError(f'Empty PAM {kind} selection')
     lines = []
     for start in range(0, len(values), 7):
-        lines.append(f'        {kind:<8}' + ''.join(field(v) for v in values[start:start+7]) + '\n')
+        # General entity selections are space-delimited; 8-digit IDs still
+        # require a separator (unlike the fixed-width MTOCO header).
+        lines.append(f'        {kind}' + ''.join(' ' + field(v) for v in values[start:start+7]) + '\n')
     return lines + ['        END\n']
 
 
@@ -46,6 +45,18 @@ def group_name(kind, sid, obj):
 
 def resolve(df, sid, styp):
     stores = {1: ('shell', 'set_shell_list'), 2: ('part', 'set_part_list'), 4: ('node', 'set_node_list')}
+    if styp == 0:
+        segments = df.set_segment[sid].segments
+        if not segments:
+            raise ValueError(f'Empty segment set {sid}')
+        lines = []
+        for segment in segments:
+            if len(segment) not in (2,3,4) or any(n not in df.node for n in segment):
+                raise ValueError(f'Segment set {sid}: invalid nodes {segment}')
+            token = 'EDG' if len(segment) == 2 else 'SEG'
+            values = segment if len(segment) != 3 else (*segment, segment[-1])
+            lines.append('        ' + token.ljust(11) + ''.join(' ' + field(n) for n in values) + '\n')
+        return lines + ['        END\n']
     if styp in stores:
         kind, key = stores[styp]
         obj = df.storge[key][sid]

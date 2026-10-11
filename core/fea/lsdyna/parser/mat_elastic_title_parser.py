@@ -1,5 +1,6 @@
+from core.fea.lsdyna.parser.card_fields import fields, number
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.mat_elastic import MatElastic
+from core.fea.model.lsdyna.mat_elastic import MatElastic
 
 
 class MatElasticTitleParser(Parser):
@@ -8,7 +9,7 @@ class MatElasticTitleParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -24,32 +25,32 @@ class MatElasticTitleParser(Parser):
         if self.line_number == 1:
             name_raw = self.temp[0]
 
-            mid_raw = line_raw[0:10].strip()
-            rho_raw = line_raw[10:20].strip()
-            e_raw = line_raw[20:30].strip()
-            pr_raw = line_raw[30:40].strip()
-            da_raw = line_raw[40:50].strip()
-            db_raw = line_raw[50:60].strip()
-            k_raw = line_raw[60:70].strip()
+            mid_raw = fields(line_raw)[0]
+            rho_raw = fields(line_raw)[1]
+            e_raw = fields(line_raw)[2]
+            pr_raw = fields(line_raw)[3]
+            da_raw = fields(line_raw)[4]
+            db_raw = fields(line_raw)[5]
+            k_raw = fields(line_raw)[6]
 
             name = name_raw
-            mid = self.dataframe.parameter[mid_raw[1:]].value if mid_raw.startswith("&") else int(mid_raw)
-            rho = self.dataframe.parameter[rho_raw[1:]].value if rho_raw.startswith("&") else float(rho_raw)
-            e = self.dataframe.parameter[e_raw[1:]].value if e_raw.startswith("&") else float(e_raw)
-            pr = self.dataframe.parameter[pr_raw[1:]].value if pr_raw.startswith("&") else float(pr_raw)
+            mid = number(mid_raw, self.dataframe, integer=True)
+            rho = number(rho_raw, self.dataframe, integer=False)
+            e = number(e_raw, self.dataframe, integer=False)
+            pr = number(pr_raw, self.dataframe, integer=False)
 
             if len(da_raw) > 0:
-                da = self.dataframe.parameter[da_raw[1:]].value if da_raw.startswith("&") else float(da_raw)
+                da = number(da_raw, self.dataframe, integer=False)
             else:
                 da = 0
 
             if len(db_raw) > 0:
-                db = self.dataframe.parameter[db_raw[1:]].value if db_raw.startswith("&") else float(db_raw)
+                db = number(db_raw, self.dataframe, integer=False)
             else:
                 db = 0
 
             if len(k_raw) > 0:
-                k = self.dataframe.parameter[k_raw[1:]].value if k_raw.startswith("&") else float(k_raw)
+                k = number(k_raw, self.dataframe, integer=False)
             else:
                 k = 0
 

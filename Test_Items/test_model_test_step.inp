@@ -1,7 +1,0 @@
-** Default unloaded implicit dynamic step; times are in model units.
-*STEP, NAME=DefaultStep, NLGEOM=YES, INC=1000
-*DYNAMIC
-0.01, 1.0, 1e-08, 0.1
-** External applied load = 0: no CLOAD, DLOAD or DSLOAD is prescribed.
-*INCLUDE, INPUT="test_model_test_history_nodes.inc"
-*END STEP

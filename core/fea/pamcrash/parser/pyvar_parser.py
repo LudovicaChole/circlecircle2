@@ -1,72 +1,41 @@
+"""Numeric PYVAR assignments only; never execute embedded Python."""
+import ast
+import math
+import operator
+from core.fea.model.lsdyna.parameter import Parameter
 from core.fea.parser import Parser
-from core.fea.pamcrash.keywords.pyvar import Pyvar
 
 
 class PyvarParser(Parser):
     def __init__(self):
         super().__init__()
-
-        self.version = {
-            "2020": self._2020,
-        }
-
-    def parse(self, line_raw, version):
-        """
-        :param line_raw: raw data
-        :return: Node Object
-        """
-        try:
-            if version in self.version:
-                self.version[version](line_raw)
-
-        except Exception as e:
-            raise Exception(f"pam-crash version {version} is not supported for PYVAR keyword\n {e}") from e
+        self.version = dict.fromkeys(('2020', '2023'), self._2020)
 
     def _2020(self, line_raw):
-        if self.line_number == 0:
-            pyvarid_raw = line_raw[8:16].strip()
-
-            self.temp.append(pyvarid_raw)
-
-            self.line_number = 1
-
+        if line_raw[:8].strip().endswith('/') or line_raw.startswith('NAME'):
             return
-
-        if self.line_number == 1:
-            name_raw = line_raw[5:].strip()
-
-            self.temp.append(name_raw)
-
-            self.line_number = 2
-
+        if not line_raw.strip():
             return
-
-        if self.line_number == 2:
-            pyvarid_raw = self.temp[0]
-            name_raw = self.temp[1]
-
-            value_raw = line_raw.split("=")[1].strip()
-
-            if len(pyvarid_raw) > 0:
-                pyvarid = int(pyvarid_raw)
-            else:
-                pyvarid = 0
-
-            if len(name_raw) > 0:
-                name = name_raw
-            else:
-                name = "default_"
-
-            if len(value_raw) > 0:
-                value = value_raw
-            else:
-                value = 0
-
-            uid = len(self.dataframe.parameter) + 1
-
-            self.dataframe.parameter[name] = Pyvar(uid=uid,
-                                                   pyvarid=pyvarid,
-                                                   name=name,
-                                                   value=value)
-
-            self.reset()
+        tree = ast.parse(line_raw.strip(), mode='exec')
+        if len(tree.body) != 1 or not isinstance(tree.body[0], ast.Assign):
+            raise ValueError('PYVAR supports numeric assignments only')
+        statement = tree.body[0]
+        if len(statement.targets) != 1 or not isinstance(statement.targets[0], ast.Name):
+            raise ValueError('PYVAR requires one variable name')
+        def evaluate(node):
+            if isinstance(node, ast.Constant) and type(node.value) in (int, float):
+                return node.value
+            if isinstance(node, ast.Name):
+                return self.dataframe.parameter[node.id].value
+            if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+                return evaluate(node.operand) * (-1 if isinstance(node.op, ast.USub) else 1)
+            operations = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
+                          ast.Div: operator.truediv}
+            if isinstance(node, ast.BinOp) and type(node.op) in operations:
+                return operations[type(node.op)](evaluate(node.left), evaluate(node.right))
+            raise ValueError('PYVAR: unsupported numeric expression')
+        result = evaluate(statement.value)
+        if not math.isfinite(result):
+            raise ValueError('PYVAR: nonfinite result')
+        name = statement.targets[0].id
+        self.dataframe.parameter[name] = Parameter('I' if type(result) is int else 'R', name, result)

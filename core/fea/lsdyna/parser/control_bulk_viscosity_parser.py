@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.control_bulk_viscosity import ControlBulkViscosity
+from core.fea.model.lsdyna.control_bulk_viscosity import ControlBulkViscosity
 
 
 class ControlBulkViscosityParser(Parser):
@@ -8,7 +8,7 @@ class ControlBulkViscosityParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

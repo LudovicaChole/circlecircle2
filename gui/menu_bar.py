@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QMenuBar
+from PySide6.QtWidgets import QMenuBar, QMessageBox
+from PySide6.QtCore import Qt
 
 
 class C2MenuBar(QMenuBar):
@@ -9,11 +10,17 @@ class C2MenuBar(QMenuBar):
 
         self.create_file_menu()
 
+        self.create_material_menu()
         self.create_optimization_menu()
 
         self.create_setting_menu()
+        self.create_nn_menu()
 
         self.create_help_menu()
+        for action, shortcut in ((self.save_action, 'Ctrl+S'), (self.new_action, 'Ctrl+N'),
+                                 (self.open_action, 'Ctrl+O'), (self.translate_action, 'Ctrl+E')):
+            action.setShortcut(shortcut)
+            action.setShortcutContext(Qt.WindowShortcut)
 
 
     def create_file_menu(self):
@@ -38,8 +45,8 @@ class C2MenuBar(QMenuBar):
             "Save as"
         )
 
-        self.export_action = file_menu.addAction(
-            "Export"
+        self.translate_action = file_menu.addAction(
+            "Translate"
         )
 
         self.set_work_directory_action = file_menu.addAction(
@@ -59,13 +66,23 @@ class C2MenuBar(QMenuBar):
         )
 
         optimize_action = optimization_menu.addAction(
-            "Optimize"
+            "Structure"
         )
 
         refine_action = optimization_menu.addAction(
-            "Refine"
+            "Thickness Refine"
         )
 
+
+        optimize_action.triggered.connect(lambda: self.developing('Structure'))
+        refine_action.triggered.connect(lambda: self.developing('Thickness Refine'))
+
+    def developing(self, name):
+        QMessageBox.information(self, name, 'This feature is under development.')
+
+    def create_material_menu(self):
+        menu = self.addMenu('Material')
+        menu.addAction('GISSMO', lambda: self.developing('GISSMO'))
 
     def create_setting_menu(self):
 
@@ -73,14 +90,28 @@ class C2MenuBar(QMenuBar):
             "Setting"
         )
 
-        license_action = setting_menu.addAction(
+        self.material_library_path_action = setting_menu.addAction('Material Library Path')
+        self.unit_action = setting_menu.addAction('Unit')
+        self.editor_settings_action = setting_menu.addAction('Editor')
+
+        self.clear_fea_action = setting_menu.addAction('Clear FEA Result')
+        self.towing_length_action = setting_menu.addAction('ABAQUS Translate')
+        self.towing_template_action = self.towing_length_action
+
+        self.license_action = setting_menu.addAction(
             "License"
         )
 
-        device_action = setting_menu.addAction(
+        self.device_action = setting_menu.addAction(
             "Device"
         )
 
+
+    def create_nn_menu(self):
+        menu = self.addMenu('NN')
+        self.towing_hook_nn_action = menu.addAction('Towing Hook NN')
+        self.towing_nn_action = menu.addAction('Towing Shape NN')
+        menu.menuAction().setVisible(False)
 
     def create_help_menu(self):
 
@@ -88,10 +119,10 @@ class C2MenuBar(QMenuBar):
             "Help"
         )
 
-        documentation_action = help_menu.addAction(
+        self.documentation_action = help_menu.addAction(
             "Documentation"
         )
 
-        contact_action = help_menu.addAction(
+        self.contact_action = help_menu.addAction(
             "Contact"
         )

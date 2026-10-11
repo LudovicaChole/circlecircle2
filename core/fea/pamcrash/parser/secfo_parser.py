@@ -1,88 +1,44 @@
 from core.fea.parser import Parser
-from core.fea.pamcrash.keywords.secfo import SecFo
+from core.fea.model.lsdyna.database_cross_section_set import DatabaseCrossSectionSet
+from core.fea.mesh_data import insert
+from .card_fields import identifier, value
 
 
 class SecFoParser(Parser):
     def __init__(self):
         super().__init__()
-
-        self.version = {
-            "2020": self._2020,
-        }
-
-    def parse(self, line_raw, version):
-        """
-        :param line_raw: raw data
-        :return: Node Object
-        """
-        try:
-            if version in self.version:
-                self.version[version](line_raw)
-
-        except Exception as e:
-            raise Exception(f"pam-crash version {version} is not supported for SecFo keyword\n {e}") from e
+        self.version = {'2020': self._2020}
 
     def _2020(self, line_raw):
-        if self.line_number == 0:
-            idsf_raw = line_raw[8:16].strip()
-            ntyp_raw = line_raw[16:24].strip()
-            ifra_raw = line_raw[24:32].strip()
+        self.temp.append(line_raw.rstrip())
 
-            self.temp.append(idsf_raw)
-            self.temp.append(ntyp_raw)
-            self.temp.append(ifra_raw)
-
-            self.line_number = 1
-
+    def finish(self):
+        if not self.temp:
             return
-
-        if self.line_number == 1:
-            idsf_raw = self.temp[0]
-            ntyp_raw = self.temp[1]
-            ifra_raw = self.temp[2]
-
-            name_raw = line_raw[8:].strip()
-
-            if len(idsf_raw) > 0:
-                idsf = self.dataframe.parameter[idsf_raw[1:]] if idsf_raw.startswith("&") else int(idsf_raw)
-            else:
-                idsf = 0
-
-            if len(ntyp_raw) > 0:
-                ntyp = self.dataframe.parameter[ntyp_raw[1:]] if ntyp_raw.startswith("&") else ntyp_raw
-            else:
-                ntyp = "SECTION"
-
-            if len(ifra_raw) > 0:
-                ifra = self.dataframe.parameter[ifra_raw[1:]] if ifra_raw.startswith("&") else float(ifra_raw)
-            else:
-                ifra = 0
-
-            name = name_raw
-
-            uid = len(self.dataframe.database_secforc) + 1
-
-            self.dataframe.database_secforc[uid] = SecFo(uid=uid,
-                                                         idsf=idsf,
-                                                         ntyp=ntyp,
-                                                         ifra=ifra,
-                                                         name=name,
-                                                         )
-
-            self.current_entity_id = uid
-
-            self.line_number = 2
-
-            return
-
-        if self.line_number == 2:
-            entity_type = line_raw[0:11].strip().lower()
-
-            if entity_type == "nod":
-                nid_list = line_raw[11:].strip().split()
-
-                self.dataframe.database_secforc[self.current_entity_id].entity_selection["nod"].update(nid_list)
-            elif entity_type == "ele":
-                ele_list = line_raw[11:].strip().split()
-
-                self.dataframe.database_secforc[self.current_entity_id].entity_selection["ele"].update(ele_list)
+        header = self.temp[0]
+        uid = identifier(header[8:16])
+        if header[16:24].strip() != 'SECTION' or value(header[24:32],integer=True):
+            raise ValueError('SECFO: only global SECTION node/element selections are supported')
+        node_ids, element_ids, name = [], [], f'section_{uid}'
+        for row in self.temp[1:]:
+            if row.startswith('NAME'):
+                name = row[4:].strip()
+                continue
+            tokens = row.split()
+            if not tokens or tokens[0]=='END':
+                continue
+            kind,*items = tokens
+            if kind not in ('NOD','ELE'):
+                raise ValueError(f'SECFO: unsupported selection {kind}')
+            store = self.dataframe.node if kind=='NOD' else {**self.dataframe.element_shell,**self.dataframe.element_solid}
+            result = node_ids if kind=='NOD' else element_ids
+            for token in items:
+                if ':' in token:
+                    first,last = map(int,token.split(':'))
+                    result.extend(i for i in store if first<=i<=last)
+                else:
+                    result.append(int(token))
+        if not node_ids or not element_ids:
+            raise ValueError('SECFO SECTION requires node and element selections')
+        insert(self.dataframe.storge['cross_section_set'], DatabaseCrossSectionSet(uid,name,tuple(sorted(set(node_ids))),tuple(sorted(set(element_ids)))))
+        self.reset()

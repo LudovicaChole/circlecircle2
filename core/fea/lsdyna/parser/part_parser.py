@@ -1,5 +1,6 @@
+from core.fea.lsdyna.parser.card_fields import fields, number
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.part import Part
+from core.fea.model.lsdyna.part import Part
 
 
 class PartParser(Parser):
@@ -8,7 +9,7 @@ class PartParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -22,40 +23,41 @@ class PartParser(Parser):
 
         if self.line_number == 1:
             name_raw = self.temp[0]
-            pid_raw = line_raw[0:10].strip()
-            secid_raw = line_raw[10:20].strip()
-            mid_raw = line_raw[20:30].strip()
-            eosid_raw = line_raw[30:40].strip()
-            hgid_raw = line_raw[40:50].strip()
+            pid_raw = fields(line_raw)[0]
+            secid_raw = fields(line_raw)[1]
+            mid_raw = fields(line_raw)[2]
+            eosid_raw = fields(line_raw)[3]
+            hgid_raw = fields(line_raw)[4]
 
             name = name_raw
 
             if len(pid_raw) > 0:
-                pid = self.dataframe.parameter[pid_raw[1:]].value if pid_raw.startswith("&") else int(pid_raw)
+                pid = number(pid_raw, self.dataframe, integer=True)
             else:
                 pid = 0
 
             if len(secid_raw) > 0:
-                secid = self.dataframe.parameter[secid_raw[1:]].value if secid_raw.startswith("&") else int(secid_raw)
+                secid = number(secid_raw, self.dataframe, integer=True)
             else:
                 secid = 0
 
             if len(mid_raw) > 0:
-                mid = self.dataframe.parameter[mid_raw[1:]].value if mid_raw.startswith("&") else int(mid_raw)
+                mid = number(mid_raw, self.dataframe, integer=True)
             else:
                 mid = 0
 
             if len(eosid_raw) > 0:
-                eosid = self.dataframe.parameter[eosid_raw[1:]].value if eosid_raw.startswith("&") else int(eosid_raw)
+                eosid = number(eosid_raw, self.dataframe, integer=True)
             else:
                 eosid = 0
 
             if len(hgid_raw) > 0:
-                hgid = self.dataframe.parameter[hgid_raw[1:]].value if hgid_raw.startswith("&") else int(hgid_raw)
+                hgid = number(hgid_raw, self.dataframe, integer=True)
             else:
                 hgid = 0
 
-            self.dataframe.part[pid] = Part(name, pid, secid, mid, eosid, hgid)
+            self.dataframe.part[pid] = Part(name, pid, secid, mid, eosid, hgid,
+                tmid=number(fields(line_raw)[7], self.dataframe, integer=True))
             self.dataframe.part_tensor.append([pid, secid, mid, eosid, hgid])
 
             self.reset()

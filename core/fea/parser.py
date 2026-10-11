@@ -1,7 +1,13 @@
 from core.fea.dataframe import dataframe
 from abc import ABC, abstractmethod
+from core.fea.validation import guarded
 
 class Parser:
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if 'parse' in cls.__dict__:
+            cls.parse = guarded('Parse')(cls.parse)
+
     def __init__(self):
         """
         self.version is a function mapping, must be define, like this:
@@ -21,7 +27,7 @@ class Parser:
         self.line_number = 0
         self.temp = []
 
-    @abstractmethod
+    @guarded("Parse")
     def parse(self, line_raw, version):
         """
         :param line_raw: raw data
@@ -29,8 +35,9 @@ class Parser:
         """
 
         try:
-            if version in self.version:
-                self.version[version](line_raw)
+            if version not in self.version:
+                raise ValueError(f"Unsupported parser version {version}")
+            self.version[version](line_raw)
 
         except Exception as e:
 

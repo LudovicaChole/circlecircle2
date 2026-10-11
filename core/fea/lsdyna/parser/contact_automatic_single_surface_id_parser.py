@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.contact_automatic_single_surface_id import ContactAutomaticSingleSurfaceID
+from core.fea.model.lsdyna.contact_automatic_single_surface_id import ContactAutomaticSingleSurfaceID
 
 
 class ContactAutomaticSingleSurfaceIDParser(Parser):
@@ -8,7 +8,7 @@ class ContactAutomaticSingleSurfaceIDParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from core.fea.geometry_compute import GeometryCompute
 
 
 class ContactSurface:
@@ -23,9 +24,20 @@ class ContactSurface:
 
     def __init__(self, dataframe):
         self.dataframe = dataframe
+        # Scoped to this translation, never retained across files/mesh edits.
+        self.compute = GeometryCompute()
+        self._selections = {}
+        self._centers = {}
+        self._face_index = None
 
     def resolve(self, selection_id, selection_type):
         selection_id, selection_type = int(selection_id), int(selection_type)
+        key = (selection_id, selection_type)
+        if key not in self._selections:
+            self._selections[key] = self._resolve(selection_id, selection_type)
+        return self._selections[key]
+
+    def _resolve(self, selection_id, selection_type):
         if selection_type == 0:
             return self._segments(selection_id)
         if selection_type == 1:
@@ -75,17 +87,24 @@ class ContactSurface:
 
     def _segments(self, selection_id):
         segments = self.dataframe.set_segment[selection_id].segments
-        face_index = defaultdict(list)
-        for element in list(self.dataframe.element_shell.values()) + list(self.dataframe.element_solid.values()):
-            for face in self._element_faces(element):
-                face_index[tuple(sorted(set(face[2])))].append(face)
+        if self._face_index is None:
+            self._face_index = defaultdict(list)
+            from itertools import chain
+            for element in chain(self.dataframe.element_shell.values(), self.dataframe.element_solid.values()):
+                for face in self._element_faces(element):
+                    self._face_index[tuple(sorted(set(face[2])))].append(face)
+                if element.format in ('s3', 's4'):
+                    ns = tuple(getattr(element, f'n{i}') for i in self.connectivity[element.format])
+                    for j, (a, b) in enumerate(zip(ns, ns[1:] + ns[:1]), 1):
+                        self._face_index[tuple(sorted((a,b)))].append((element.uid, f'E{j}', (a,b)))
+        face_index = self._face_index
         result = []
         for segment in segments:
             key = tuple(sorted(set(segment)))
             matches = face_index.get(key, [])
-            if len(matches) != 1:
+            if not matches or (len(segment) != 2 and len(matches) != 1):
                 raise ValueError(f"Segment {segment} must identify exactly one element face")
-            result.append(matches[0])
+            result.extend(matches)
         if not result:
             raise ValueError(f"Empty segment set {selection_id}")
         return list(dict.fromkeys(result))
@@ -96,12 +115,16 @@ class ContactSurface:
         This is an initial-geometry conversion of automatic two-sided contact.
         Ambiguous coplanar/overlapping surfaces require explicit user modeling.
         """
+        shells = [face for face in faces if face[1] is None]
+        if not shells:
+            return [(uid, side) for uid, side, _ in faces]
         opposite_centers = [self._center(face[2]) for face in opposite_faces]
+        indices = iter(self.compute.nearest([self._center(face[2]) for face in shells], opposite_centers))
         result = []
         for uid, side, nodes in faces:
             if side is None:
                 center = self._center(nodes)
-                nearest = min(opposite_centers, key=lambda point: sum((a - b) ** 2 for a, b in zip(point, center)))
+                nearest = opposite_centers[next(indices)]
                 xyz = [self.dataframe.node[node].xyz for node in nodes]
                 # Newell normal is stable for planar triangles and quadrilaterals.
                 normal = [0.0, 0.0, 0.0]
@@ -119,8 +142,13 @@ class ContactSurface:
         return result
 
     def _center(self, nodes):
+        nodes = tuple(nodes)
+        if nodes in self._centers:
+            return self._centers[nodes]
         points = [self.dataframe.node[node].xyz for node in nodes]
-        return tuple(sum(point[i] for point in points) / len(points) for i in range(3))
+        center = tuple(sum(point[i] for point in points) / len(points) for i in range(3))
+        self._centers[nodes] = center
+        return center
 
     @staticmethod
     def write_surface(name, faces):
@@ -134,5 +162,7 @@ class ContactSurface:
             for start in range(0, len(ids), 16):
                 lines.append(", ".join(str(uid) for uid in ids[start:start + 16]) + "\n")
         lines.append(f"*SURFACE, NAME={name}, TYPE=ELEMENT\n")
-        lines.extend(f"{name}_{side}, {side}\n" for side in sorted(groups))
+        # Omit the face identifier for double-sided general-contact shells.
+        # BOTH is an internal grouping label, not an Abaqus face identifier.
+        lines.extend(f"{name}_{side}, {'' if side == 'BOTH' else side}\n" for side in sorted(groups))
         return lines

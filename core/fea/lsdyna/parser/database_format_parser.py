@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.database_format import DatabaseFormat
+from core.fea.model.lsdyna.database_format import DatabaseFormat
 
 
 class DatabaseFormatParser(Parser):
@@ -8,7 +8,7 @@ class DatabaseFormatParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

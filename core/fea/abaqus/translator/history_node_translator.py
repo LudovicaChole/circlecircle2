@@ -6,7 +6,7 @@ class HistoryNodeTranslator(Translator):
 
     def __init__(self):
         super().__init__()
-        self.version = {"6.14": self._6p14}
+        self.version = {"6.14": self._6p14, "2024": self._6p14}
         self.set_name = "dyna_history_nodes"
 
     def translate(self, version):

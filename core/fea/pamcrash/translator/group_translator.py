@@ -13,4 +13,9 @@ class GroupTranslator(Translator):
                     continue
                 lines.append(f"GROUP / '{group_name(family,sid,obj)}'\n")
                 lines.extend(selection(token,values))
+        from .selection import resolve
+        for sid in self.dataframe.set_segment:
+            lines.append(f"GROUP / 'segments_{sid}'\n")
+            lines.extend(resolve(self.dataframe, sid, 0))
+        lines.extend(self.dataframe.output_storge.pop('MOTION_GROUP', []))
         self.dataframe.output_storge['GROUP'] = lines

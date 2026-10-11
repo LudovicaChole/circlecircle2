@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.part import Part
+from core.fea.model.lsdyna.part import Part
 
 
 class PartInertiaParser(Parser):
@@ -8,7 +8,7 @@ class PartInertiaParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -129,7 +129,7 @@ class PartInertiaParser(Parser):
                 mid = 0
 
             if len(eosid_raw) > 0:
-                eosid = self.dataframe.parameter[eosid_raw[1:]] if eosid_raw.startswith("&") else int(eosid_raw)
+                eosid = self.dataframe.parameter[eosid_raw[1:]].value if eosid_raw.startswith("&") else int(eosid_raw)
             else:
                 eosid = 0
 

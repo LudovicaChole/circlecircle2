@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.define_table_2d import DefineTable2D
+from core.fea.model.lsdyna.define_table_2d import DefineTable2D
 
 
 class DefineTable2DParser(Parser):
@@ -8,7 +8,7 @@ class DefineTable2DParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
         self.current_table_id = None

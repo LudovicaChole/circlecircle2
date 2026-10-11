@@ -1,3 +1,6 @@
+from utilities.source_location import SourceStore
+
+
 class DataFrame:
     """
     base data storge for fea
@@ -8,6 +11,23 @@ class DataFrame:
         self.solver = None
 
         self.storge = {
+            'prescribed_motion_node': {},
+            'initial_velocity': {},
+            'element_beam': {},
+            'load_node': {},
+            'thermal': {},
+            'fluid': {},
+            'implicit_eigenvalue': {},
+            'electromagnetic': {},
+            'boundary_spc_node': {},
+            'initial_velocity_node': {},
+            'pam_groups': {},
+            'cross_section_set': {},
+            'conversion_notes': {},
+            'hourglass_notes': {},
+            'surface_ties': {},
+            'joints': {},
+            'joint_stiffness': {},
             "element_mass": {},
             "set_solid_list": {},
             "database_nodfor": {},
@@ -81,6 +101,8 @@ class DataFrame:
             "contact_tied_nodes_to_surface_id": {},
             "end": {},
         }
+
+        self.storge = {name: SourceStore(values) for name, values in self.storge.items()}
 
         self.storge_node_id = []
 

@@ -1,50 +1,20 @@
+"""Write curve scales and shifts without losing LS-DYNA physical coordinates."""
 from core.fea.translator import Translator
+from .selection import field
 
 
 class FunctTranslator(Translator):
     def __init__(self):
         super().__init__()
-
-        self.version = {
-            "2020": self._2020,
-        }
+        self.version = {'2020': self._write, '2023': self._write}
 
     def translate(self, version):
-        try:
-            if version in self.version:
-                self.version[version]()
+        self._write()
 
-        except Exception as e:
-            raise Exception(f"PAMCRASH FunctTranslator ERROR: {e}") from e
-
-    def _2020(self):
-        define_curve_dict = self.dataframe.define_curve
-
-        if len(define_curve_dict) > 0:
-            output_storge = self.dataframe.output_storge.setdefault("FUNCT", [])
-
-            for curve_id, curve in define_curve_dict.items():
-                sfa = curve.sfa
-                sfo = curve.sfo
-                offa = curve.offa
-                offo = curve.offo
-                name = curve.name
-
-                a1 = curve.a1
-                o1 = curve.o1
-
-                output_storge.append(
-                    f"$#         IDFUN  FUNTYP   SCALX   SCALY  SHIFTX  SHIFTY                \n"
-                    f"FUNCT /{curve_id: >9}       0{sfa: >8.5f}{sfo: >8.5f}{offa: >8.5f}{offo: >8.5f}                \n"
-                    f"$#   TITLE                  \n"
-                    f"NAME {name}\n"
-                    f"$#                             X               Y\n"
-                )
-
-                for i in range(len(a1)):
-                    x = a1[i]
-                    y = o1[i]
-
-                    output_storge.append(
-                        f"                {x: >16.8f}{y: >16.8f}\n"
-                    )
+    def _write(self):
+        lines = self.dataframe.output_storge.setdefault('FUNCT', [])
+        for cid, curve in self.dataframe.define_curve.items():
+            sx, sy = curve.sfa or 1.0, curve.sfo or 1.0
+            lines += ['FUNCT / '+''.join(field(v) for v in (cid,0,sx,sy,curve.offa*sx,curve.offo*sy))+'\n',
+                      f'NAME {curve.name}\n']
+            lines += [' '*16+field(x,16)+field(y,16)+'\n' for x,y in zip(curve.a1,curve.o1)]

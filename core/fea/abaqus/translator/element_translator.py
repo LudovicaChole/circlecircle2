@@ -1,4 +1,3 @@
-from .analysis_data import is_explicit
 from core.fea.translator import Translator
 
 
@@ -7,7 +6,7 @@ class ElementTranslator(Translator):
         super().__init__()
 
         self.version = {
-            "6.14": self._6p14,
+            "6.14": self._6p14, "2024": self._6p14,
         }
 
     def translate(self, version):
@@ -119,7 +118,7 @@ class ElementTranslator(Translator):
                     )
 
                     output_storge["*ELEMENT"].append(
-                        f"*ELEMENT,TYPE={'S3R' if is_explicit(self.dataframe) else 'S3'},ELSET={property_name}\n"
+                        f"*ELEMENT,TYPE=S3,ELSET={property_name}\n"
                     )
 
                     for line in temp_s3:
@@ -131,7 +130,7 @@ class ElementTranslator(Translator):
                     )
 
                     output_storge["*ELEMENT"].append(
-                        f"*ELEMENT,TYPE={'S4R' if is_explicit(self.dataframe) else 'S4'},ELSET={property_name}\n"
+                        f"*ELEMENT,TYPE=S4,ELSET={property_name}\n"
                     )
 
                     for line in temp_s4:

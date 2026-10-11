@@ -169,14 +169,15 @@ set "HM_SCRIPT={hw_script_path}"
             time.sleep(2)
 
 
-hwx_path = r"C:\Program Files\Altair\2026\hwdesktop\hwx\bin\win64\runhwx.exe"
-temp_folder = r"E:\PythonProject\test_hwx"
-stp_path = r"E:\PythonProject\test_hwx\Part1.stp"
-hm_path = r"E:\PythonProject\test_hwx\761D_Outer_Beam_c2auto.hm"
-fea_path = r"E:\PythonProject\test_hwx\761D_Outer_Beam.k"
+if __name__ == "__main__":
+    hwx_path = r"C:\Program Files\Altair\2026\hwdesktop\hwx\bin\win64\runhwx.exe"
+    temp_folder = r"E:\PythonProject\test_hwx"
+    stp_path = r"E:\PythonProject\test_hwx\Part1.stp"
+    hm_path = r"E:\PythonProject\test_hwx\761D_Outer_Beam_c2auto.hm"
+    fea_path = r"E:\PythonProject\test_hwx\761D_Outer_Beam.k"
 
-runhwx = RunHWX(hwx_path, temp_folder)
-runhwx.run_background(mode="run_background_stp", target=stp_path)
-# runhwx.run_background(mode="run_background_hm", target=hm_path)
-# runhwx.launch_hmdesktop(mode="launch_key", target=fea_path)
-# runhwx.launch_hmdesktop(mode="launch_hm", target=hm_path)
+    runhwx = RunHWX(hwx_path, temp_folder)
+    runhwx.run_background(mode="run_background_stp", target=stp_path)
+    # runhwx.run_background(mode="run_background_hm", target=hm_path)
+    # runhwx.launch_hmdesktop(mode="launch_key", target=fea_path)
+    # runhwx.launch_hmdesktop(mode="launch_hm", target=hm_path)

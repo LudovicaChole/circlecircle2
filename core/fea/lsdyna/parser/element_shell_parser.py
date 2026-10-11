@@ -1,5 +1,7 @@
+from core.fea.lsdyna.parser.card_fields import fields, number
+from core.fea.mesh_data import insert
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.element_shell import ElementShell
+from core.fea.model.lsdyna.element_shell import ElementShell
 
 
 class ElementShellParser(Parser):
@@ -8,24 +10,25 @@ class ElementShellParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
-        uid_raw = line_raw[0:8].strip()
-        pid_raw = line_raw[8:16].strip()
-        n1_raw = line_raw[16:24].strip()
-        n2_raw = line_raw[24:32].strip()
-        n3_raw = line_raw[32:40].strip()
-        n4_raw = line_raw[40:48].strip()
+        values = fields(line_raw, (8,)*10)
+        uid_raw, pid_raw, n1_raw, n2_raw, n3_raw, n4_raw = values[:6]
 
-        uid = self.dataframe.parameter[uid_raw[1:]].value if uid_raw.startswith("&") else int(uid_raw)
-        pid = self.dataframe.parameter[pid_raw[1:]].value if pid_raw.startswith("&") else int(pid_raw)
-        n1 = self.dataframe.parameter[n1_raw[1:]].value if n1_raw.startswith("&") else int(n1_raw)
-        n2 = self.dataframe.parameter[n2_raw[1:]].value if n2_raw.startswith("&") else int(n2_raw)
-        n3 = self.dataframe.parameter[n3_raw[1:]].value if n3_raw.startswith("&") else int(n3_raw)
-        n4 = self.dataframe.parameter[n4_raw[1:]].value if n4_raw.startswith("&") else int(n4_raw)
+        uid = number(uid_raw, self.dataframe, integer=True)
+        pid = number(pid_raw, self.dataframe, integer=True)
+        n1 = number(n1_raw, self.dataframe, integer=True)
+        n2 = number(n2_raw, self.dataframe, integer=True)
+        n3 = number(n3_raw, self.dataframe, integer=True)
+        n4 = number(n4_raw, self.dataframe, integer=True)
 
+        if any(number(value, self.dataframe, integer=True) for value in values[6:]):
+            raise ValueError('Higher-order ELEMENT_SHELL nodes are not supported; conversion would discard midside nodes')
+        n4 = n4 or n3
+        if uid in self.dataframe.element_shell:
+            raise ValueError(f'Duplicate shell identifier {uid}')
         self.dataframe.element_shell[uid] = ElementShell(uid=uid,
                                                          pid=pid,
                                                          n1=n1,

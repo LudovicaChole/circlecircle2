@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.control_energy import ControlEnergy
+from core.fea.model.lsdyna.control_energy import ControlEnergy
 
 
 class ControlEnergyParser(Parser):
@@ -8,7 +8,7 @@ class ControlEnergyParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -19,22 +19,22 @@ class ControlEnergyParser(Parser):
         irgen_raw = line_raw[40:50].strip()
 
         if len(hgen_raw) > 0:
-            hgen = self.dataframe.parameter[hgen_raw[1:]] if hgen_raw.startswith("&") else int(hgen_raw)
+            hgen = self.dataframe.parameter[hgen_raw[1:]].value if hgen_raw.startswith("&") else int(hgen_raw)
         else:
             hgen = 0
 
         if len(rwen_raw) > 0:
-            rwen = self.dataframe.parameter[rwen_raw[1:]] if rwen_raw.startswith("&") else int(rwen_raw)
+            rwen = self.dataframe.parameter[rwen_raw[1:]].value if rwen_raw.startswith("&") else int(rwen_raw)
         else:
             rwen = 0
 
         if len(slnten_raw) > 0:
-            slnten = self.dataframe.parameter[slnten_raw[1:]] if slnten_raw.startswith("&") else int(slnten_raw)
+            slnten = self.dataframe.parameter[slnten_raw[1:]].value if slnten_raw.startswith("&") else int(slnten_raw)
         else:
             slnten = 0
 
         if len(rylen_raw) > 0:
-            rylen = self.dataframe.parameter[rylen_raw[1:]] if rylen_raw.startswith("&") else float(rylen_raw)
+            rylen = self.dataframe.parameter[rylen_raw[1:]].value if rylen_raw.startswith("&") else float(rylen_raw)
         else:
             rylen = 0
 

@@ -6,7 +6,7 @@ from .card_fields import fields, number
 class ElementMassParser(Parser):
     def __init__(self):
         super().__init__()
-        self.version = {"12.0": self._read, "13.0": self._read}
+        self.version = {"12.0": self._read, "13.0": self._read, "16.0": self._read}
 
     def _read(self, line_raw):
         if not line_raw.strip():

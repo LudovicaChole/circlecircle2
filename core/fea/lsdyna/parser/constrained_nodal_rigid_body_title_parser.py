@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.constrained_nodal_rigid_body import ConstrainedNodalRigidBody
+from core.fea.model.lsdyna.constrained_nodal_rigid_body import ConstrainedNodalRigidBody
 
 
 class ConstrainedNodalRigidBodyTitleParser(Parser):
@@ -8,7 +8,7 @@ class ConstrainedNodalRigidBodyTitleParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

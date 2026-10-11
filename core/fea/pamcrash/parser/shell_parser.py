@@ -1,81 +1,20 @@
 from core.fea.parser import Parser
-from core.fea.pamcrash.keywords.shell import Shell
+from core.fea.model.lsdyna.element_shell import ElementShell
+from core.fea.mesh_data import insert
+from .card_fields import identifier, value
 
 
 class ShellParser(Parser):
     def __init__(self):
         super().__init__()
-
-        self.version = {
-            "2020": self._2020,
-        }
-
-    def parse(self, line_raw, version):
-        """
-        :param line_raw: raw data
-        :return: Node Object
-        """
-        try:
-            if version in self.version:
-                self.version[version](line_raw)
-
-        except Exception as e:
-            raise Exception(f"pam-crash version {version} is not supported for SHELL keyword\n {e}") from e
+        self.version = {'2020': self._2020}
 
     def _2020(self, line_raw):
-        idel_raw = line_raw[8:16].strip()
-        idprt_raw = line_raw[16:24].strip()
-        idnod1_raw = line_raw[24:32].strip()
-        idnod2_raw = line_raw[32:40].strip()
-        idnod3_raw = line_raw[40:48].strip()
-        idnod4_raw = line_raw[48:56].strip()
-        h_raw = line_raw[56:64].strip()
-
-        if len(idel_raw) > 0:
-            idel = self.dataframe.parameter[idel_raw[1:]] if idel_raw.startswith("&") else int(idel_raw)
-        else:
-            idel = 0
-
-        if len(idprt_raw) > 0:
-            idprt = self.dataframe.parameter[idprt_raw[1:]] if idprt_raw.startswith("&") else int(idprt_raw)
-        else:
-            idprt = 0
-
-        if len(idnod1_raw) > 0:
-            idnod1 = self.dataframe.parameter[idnod1_raw[1:]] if idnod1_raw.startswith("&") else int(idnod1_raw)
-        else:
-            idnod1 = 0
-
-        if len(idnod2_raw) > 0:
-            idnod2 = self.dataframe.parameter[idnod2_raw[1:]] if idnod2_raw.startswith("&") else int(idnod2_raw)
-        else:
-            idnod2 = 0
-
-        if len(idnod3_raw) > 0:
-            idnod3 = self.dataframe.parameter[idnod3_raw[1:]] if idnod3_raw.startswith("&") else int(idnod3_raw)
-        else:
-            idnod3 = 0
-
-        if len(idnod4_raw) > 0:
-            idnod4 = self.dataframe.parameter[idnod4_raw[1:]] if idnod4_raw.startswith("&") else int(idnod4_raw)
-        else:
-            idnod4 = 0
-
-        if len(h_raw) > 0:
-            h = self.dataframe.parameter[h_raw[1:]] if h_raw.startswith("&") else float(h_raw)
-        else:
-            h = 0
-
-        uid = len(self.dataframe.element_shell) + 1
-
-        self.dataframe.element_shell[uid] = Shell(uid=uid,
-                                                  idel=idel,
-                                                  idprt=idprt,
-                                                  idnod1=idnod1,
-                                                  idnod2=idnod2,
-                                                  idnod3=idnod3,
-                                                  idnod4=idnod4,
-                                                  h=h)
-
-        self.reset()
-
+        eid, pid, n1, n2, n3 = [identifier(line_raw[i:i+8]) for i in range(8, 48, 8)]
+        n4 = value(line_raw[48:56], integer=True) or n3
+        element = ElementShell(uid=eid, pid=pid, n1=n1, n2=n2, n3=n3, n4=n4)
+        # Columns 57-64 are reserved; H occupies columns 65-72.
+        element.thickness = value(line_raw[64:72])
+        if element.thickness < 0:
+            raise ValueError('SHELL: negative H is not supported')
+        insert(self.dataframe.element_shell, element)

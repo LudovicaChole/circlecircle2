@@ -1,4 +1,3 @@
-from .analysis_data import is_explicit
 from core.fea.translator import Translator
 from utilities.logger import logger
 
@@ -6,7 +5,7 @@ from utilities.logger import logger
 class KinematicCouplingTranslator(Translator):
     def __init__(self):
         super().__init__()
-        self.version = {"6.14": self._6p14}
+        self.version = {"6.14": self._6p14, "2024": self._6p14}
 
     def translate(self, version):
         try:
@@ -59,19 +58,15 @@ class KinematicCouplingTranslator(Translator):
         for reference, nodes in couplings.items():
             if not nodes:
                 continue
-            if is_explicit(self.dataframe):
-                name = f'dyna_rigid_{reference}'
-                coupling_lines.append(f'*NSET, NSET={name}\n')
-                ids = sorted(nodes)
-                for start in range(0, len(ids), 16):
-                    coupling_lines.append(', '.join(map(str, ids[start:start+16])) + '\n')
-                coupling_lines.extend([f'*SURFACE, TYPE=NODE, NAME={name}_surface\n',
-                    f'{name}, 1.0\n',
-                    f'*COUPLING, CONSTRAINT NAME={name}_coupling, REF NODE={reference}, SURFACE={name}_surface\n',
-                    '*KINEMATIC\n', '1, 6\n'])
-            else:
-                coupling_lines.append(f"*KINEMATIC COUPLING,REF NODE={reference}\n")
-                coupling_lines.extend(f"{nid:<10}, 1, 6\n" for nid in sorted(nodes))
+            name = f'dyna_rigid_{reference}'
+            coupling_lines.append(f'*NSET, NSET={name}\n')
+            ids = sorted(nodes)
+            for start in range(0, len(ids), 16):
+                coupling_lines.append(', '.join(map(str, ids[start:start+16])) + '\n')
+            coupling_lines.extend([f'*SURFACE, TYPE=NODE, NAME={name}_surface\n',
+                f'{name}, 1.0\n',
+                f'*COUPLING, CONSTRAINT NAME={name}_coupling, REF NODE={reference}, SURFACE={name}_surface\n',
+                '*KINEMATIC\n', '1, 6\n'])
         if node_lines:
             self.dataframe.output_storge.setdefault("*NODE", []).extend(["*NODE\n"] + node_lines)
         if coupling_lines:
@@ -92,7 +87,7 @@ class KinematicCouplingTranslator(Translator):
                 raise ValueError(f"Part {pid}: extra node set {nsid} is empty")
             if extra.iflag:
                 logger.warning(f"Part {pid}: extra-node IFLAG={extra.iflag}; coupling is converted, "
-                               "but PART_INERTIA mass/inertia updates are not implemented")
+                               "but PART_INERTIA mass/inertia updates are not implemented", source=extra)
             couplings[part_references[pid]].update(nodes)
 
     def _add_nodal_rigid_bodies(self, couplings):

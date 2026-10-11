@@ -1,6 +1,6 @@
 from core.fea.parser import Parser
 from core.fea.lsdyna.parser.history_node_fields import history_node_fields
-from core.fea.lsdyna.keywords.database_history_node import DatabaseHistoryNode
+from core.fea.model.lsdyna.database_history_node import DatabaseHistoryNode
 
 
 class DatabaseHistoryNodeParser(Parser):
@@ -9,7 +9,7 @@ class DatabaseHistoryNodeParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

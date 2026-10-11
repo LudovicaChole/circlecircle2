@@ -1,12 +1,12 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.set_segment import SetSegment
+from core.fea.model.lsdyna.set_segment import SetSegment
 
 
 class SetSegmentParser(Parser):
     def __init__(self, title=False):
         super().__init__()
         self.title = title
-        self.version = {"12.0": self._12p0, "13.0": self._12p0}
+        self.version = {"12.0": self._12p0, "13.0": self._12p0, "16.0": self._12p0}
 
     def _value(self, raw):
         raw = raw.strip()
@@ -28,6 +28,6 @@ class SetSegmentParser(Parser):
         if not any(nodes):
             return
         nodes = tuple(dict.fromkeys(node for node in nodes if node))
-        if len(nodes) not in (3, 4):
+        if len(nodes) not in (2, 3, 4):
             raise ValueError(f"Invalid segment in set {self.current_set.uid}: {nodes}")
         self.current_set.segments.append(nodes)

@@ -14,5 +14,5 @@ class SecfoTranslator(Translator):
                 '        '+''.join(field(v) for v in (obj.xct,obj.yct,obj.zct,obj.xch,obj.ych,obj.zch,obj.radius))+'\n'])
             lines.extend(selection('PART',parts))
             lines.append(f'$ Source XHEV/YHEV/ZHEV: {obj.xhev}, {obj.yhev}, {obj.zhev}; no mapped output-axis field.\n')
-            logger.warning(f'SECFO {obj.uid}: source in-plane output axes have no mapped PAM field')
+            logger.warning(f'SECFO {obj.uid}: source in-plane output axes have no mapped PAM field', source=obj)
         self.dataframe.output_storge['SECFO'] = lines

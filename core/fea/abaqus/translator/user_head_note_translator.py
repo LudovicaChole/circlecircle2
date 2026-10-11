@@ -7,7 +7,7 @@ class UserHeadNoteTranslator(Translator):
         super().__init__()
 
         self.version = {
-            "6.14": self._6p14,
+            "6.14": self._6p14, "2024": self._6p14,
         }
 
     def translate(self, version):

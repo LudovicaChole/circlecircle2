@@ -4,7 +4,7 @@ from utilities.logger import logger
 
 
 def is_explicit(df):
-    return bool(df.initial_velocity_generation or df.boundary_prescribed_motion_rigid)
+    return bool(df.initial_velocity_generation or df.boundary_prescribed_motion_rigid or df.storge["initial_velocity_node"] or df.storge['initial_velocity'])
 
 
 def curve_points(curve):
@@ -44,14 +44,33 @@ def motion_dof(motion):
 def node_ids(df, values):
     ids = {int(df.parameter[str(v)[1:]].value) if str(v).startswith('&') else int(v) for v in values}
     ids.discard(0)
-    missing = ids - df.node.keys()
+    missing = {nid for nid in ids if nid not in df.node}
     if missing:
         raise ValueError(f'Missing selected nodes: {sorted(missing)[:8]}')
     return ids
 
 
 def velocity_field(df):
+    from core.fea.geometry_compute import GeometryCompute
+    compute = GeometryCompute()
     result = {}
+    if df.storge['initial_velocity'] and df.initial_velocity_generation:
+        raise ValueError('INITIAL_VELOCITY cannot coexist with INITIAL_VELOCITY_GENERATION')
+    for velocity in df.storge['initial_velocity'].values():
+        from utilities.source_location import diagnostic
+        def selected_nodes(sid):
+            if sid not in df.set_node_list:
+                raise ValueError(f'INITIAL_VELOCITY: missing node set {sid}')
+            return node_ids(df, df.set_node_list[sid].ids)
+        try:
+            selected = selected_nodes(velocity.nsid) if velocity.nsid else set(df.node)
+            exempt = selected_nodes(velocity.nsidex) if velocity.nsidex else set()
+            for nid in selected - exempt:
+                result[nid] = velocity.components
+            for nid in exempt:
+                result[nid] = velocity.exempt_components
+        except ValueError as error:
+            raise ValueError(diagnostic(error, velocity)) from error
     for velocity in df.initial_velocity_generation.values():
         if velocity.lcid:
             raise ValueError(f'Initial velocity {velocity.uid}: local ICID={velocity.lcid} is not supported')
@@ -93,11 +112,22 @@ def velocity_field(df):
         if velocity.omega and length == 0:
             raise ValueError('Initial angular velocity has a zero rotation axis')
         omega = tuple(velocity.omega*v/length if length else 0.0 for v in axis)
+        if len(selected) >= 1024:
+            ids = list(selected)
+            points = [df.node[nid].xyz if nid in df.node else df.storge_rigid_part_goc_xyz[nid] for nid in ids]
+            components = compute.velocities(points, center, (velocity.vx,velocity.vy,velocity.vz), omega)
+            for nid, values in zip(ids, components.tolist()):
+                result[nid] = (*values, *omega)
+            continue
         for nid in selected:
             point = df.node[nid].xyz if nid in df.node else df.storge_rigid_part_goc_xyz[nid]
             x,y,z = (b-a for a,b in zip(center,point))
             wx,wy,wz = omega
             result[nid] = (velocity.vx + wy*z-wz*y, velocity.vy + wz*x-wx*z, velocity.vz + wx*y-wy*x, *omega)
+    for nid, obj in df.storge['initial_velocity_node'].items():
+        if nid not in df.node:
+            raise ValueError(f'Initial velocity: missing node {nid}')
+        result[nid] = obj.components
     return result
 
 
@@ -105,9 +135,15 @@ def period(df, default=1.0):
     terms = list(df.control_termination.values())
     if terms:
         value = terms[-1].endtim
-        if value <= 0:
+        if not math.isfinite(value) or value <= 0:
             raise ValueError('CONTROL_TERMINATION ENDTIM must be positive')
         return value
+    motions = list(df.boundary_prescribed_motion_rigid.values()) + list(df.storge['prescribed_motion_node'].values())
+    if motions:
+        end = max(curve_points(df.define_curve[m.lcid])[-1][0] for m in motions)
+        if end > 0:
+            logger.warning(f'No termination time: using prescribed-motion curve duration {end}')
+            return end
     if is_explicit(df):
-        logger.warning('No CONTROL_TERMINATION: using explicit duration 1.0 in source model units')
+        logger.warning('No termination time: using duration 1.0 in source model units')
     return default

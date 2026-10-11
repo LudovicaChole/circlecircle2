@@ -1,5 +1,6 @@
+from core.fea.lsdyna.parser.card_fields import fields, number
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.database_matsum import DatabaseMatsum
+from core.fea.model.lsdyna.database_matsum import DatabaseMatsum
 
 
 class DatabaseMatsumParser(Parser):
@@ -8,32 +9,32 @@ class DatabaseMatsumParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
-        dt_raw = line_raw[0:10].strip()
-        binary_raw = line_raw[10:20].strip()
-        lcur_raw = line_raw[20:30].strip()
-        ioopt_raw = line_raw[30:40].strip()
+        dt_raw = fields(line_raw)[0]
+        binary_raw = fields(line_raw)[1]
+        lcur_raw = fields(line_raw)[2]
+        ioopt_raw = fields(line_raw)[3]
 
         if len(dt_raw) > 0:
-            dt = self.dataframe.parameter[dt_raw[1:]].value if dt_raw.startswith("&") else float(dt_raw)
+            dt = number(dt_raw, self.dataframe, integer=False)
         else:
             dt = 0
 
         if len(binary_raw) > 0:
-            binary = self.dataframe.parameter[binary_raw[1:]].value if binary_raw.startswith("&") else int(binary_raw)
+            binary = number(binary_raw, self.dataframe, integer=True)
         else:
             binary = 0
 
         if len(lcur_raw) > 0:
-            lcur = self.dataframe.parameter[lcur_raw[1:]].value if lcur_raw.startswith("&") else float(lcur_raw)
+            lcur = number(lcur_raw, self.dataframe, integer=False)
         else:
             lcur = 0
 
         if len(ioopt_raw) > 0:
-            ioopt = self.dataframe.parameter[ioopt_raw[1:]].value if ioopt_raw.startswith("&") else float(ioopt_raw)
+            ioopt = number(ioopt_raw, self.dataframe, integer=False)
         else:
             ioopt = 0
 

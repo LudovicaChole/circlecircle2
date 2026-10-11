@@ -7,7 +7,7 @@ class MatAddDamageGissmoTitleParser(Parser):
     def __init__(self, title=True):
         super().__init__()
         self.title = title
-        self.version = {"12.0": self._read, "13.0": self._read}
+        self.version = {"12.0": self._read, "13.0": self._read, "16.0": self._read}
 
     def _read(self, line_raw):
         index = self.line_number - int(self.title)

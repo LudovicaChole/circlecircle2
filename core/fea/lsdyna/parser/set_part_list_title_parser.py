@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.set_part_list import SetPartList
+from core.fea.model.lsdyna.set_part_list import SetPartList
 
 
 class SetPartListTitleParser(Parser):
@@ -8,7 +8,7 @@ class SetPartListTitleParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
         self.current_set_list_id = None

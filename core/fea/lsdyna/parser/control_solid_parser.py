@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.control_solid import ControlSolid
+from core.fea.model.lsdyna.control_solid import ControlSolid
 
 
 class ControlSolidParser(Parser):
@@ -8,7 +8,7 @@ class ControlSolidParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -58,94 +58,94 @@ class ControlSolidParser(Parser):
             pm10_raw = line_raw[72:80].strip()
 
             if len(esort_raw) > 0:
-                esort = self.dataframe.parameter[esort_raw[1:]] if esort_raw.startswith("&") else int(esort_raw)
+                esort = self.dataframe.parameter[esort_raw[1:]].value if esort_raw.startswith("&") else int(esort_raw)
             else:
                 esort = 0
 
             if len(fmatrx_raw) > 0:
-                fmatrx = self.dataframe.parameter[fmatrx_raw[1:]] if fmatrx_raw.startswith("&") else float(fmatrx_raw)
+                fmatrx = self.dataframe.parameter[fmatrx_raw[1:]].value if fmatrx_raw.startswith("&") else float(fmatrx_raw)
             else:
                 fmatrx = 0
 
             if len(niptets_raw) > 0:
-                niptets = self.dataframe.parameter[niptets_raw[1:]] if niptets_raw.startswith("&") else float(
+                niptets = self.dataframe.parameter[niptets_raw[1:]].value if niptets_raw.startswith("&") else float(
                     niptets_raw)
             else:
                 niptets = 0
 
             if len(swlocl_raw) > 0:
-                swlocl = self.dataframe.parameter[swlocl_raw[1:]] if swlocl_raw.startswith("&") else float(swlocl_raw)
+                swlocl = self.dataframe.parameter[swlocl_raw[1:]].value if swlocl_raw.startswith("&") else float(swlocl_raw)
             else:
                 swlocl = 0
 
             if len(psfail_raw) > 0:
-                psfail = self.dataframe.parameter[psfail_raw[1:]] if psfail_raw.startswith("&") else float(psfail_raw)
+                psfail = self.dataframe.parameter[psfail_raw[1:]].value if psfail_raw.startswith("&") else float(psfail_raw)
             else:
                 psfail = 0
 
             if len(t10jtol_raw) > 0:
-                t10jtol = self.dataframe.parameter[t10jtol_raw[1:]] if t10jtol_raw.startswith("&") else float(
+                t10jtol = self.dataframe.parameter[t10jtol_raw[1:]].value if t10jtol_raw.startswith("&") else float(
                     t10jtol_raw)
             else:
                 t10jtol = 0
 
             if len(icoh_raw) > 0:
-                icoh = self.dataframe.parameter[icoh_raw[1:]] if icoh_raw.startswith("&") else float(icoh_raw)
+                icoh = self.dataframe.parameter[icoh_raw[1:]].value if icoh_raw.startswith("&") else float(icoh_raw)
             else:
                 icoh = 0
 
             if len(tet13k_raw) > 0:
-                tet13k = self.dataframe.parameter[tet13k_raw[1:]] if tet13k_raw.startswith("&") else float(tet13k_raw)
+                tet13k = self.dataframe.parameter[tet13k_raw[1:]].value if tet13k_raw.startswith("&") else float(tet13k_raw)
             else:
                 tet13k = 0
 
             if len(pm1_raw) > 0:
-                pm1 = self.dataframe.parameter[pm1_raw[1:]] if pm1_raw.startswith("&") else float(pm1_raw)
+                pm1 = self.dataframe.parameter[pm1_raw[1:]].value if pm1_raw.startswith("&") else float(pm1_raw)
             else:
                 pm1 = 0
 
             if len(pm2_raw) > 0:
-                pm2 = self.dataframe.parameter[pm2_raw[1:]] if pm2_raw.startswith("&") else float(pm2_raw)
+                pm2 = self.dataframe.parameter[pm2_raw[1:]].value if pm2_raw.startswith("&") else float(pm2_raw)
             else:
                 pm2 = 0
 
             if len(pm3_raw) > 0:
-                pm3 = self.dataframe.parameter[pm3_raw[1:]] if pm3_raw.startswith("&") else float(pm3_raw)
+                pm3 = self.dataframe.parameter[pm3_raw[1:]].value if pm3_raw.startswith("&") else float(pm3_raw)
             else:
                 pm3 = 0
 
             if len(pm4_raw) > 0:
-                pm4 = self.dataframe.parameter[pm4_raw[1:]] if pm4_raw.startswith("&") else float(pm4_raw)
+                pm4 = self.dataframe.parameter[pm4_raw[1:]].value if pm4_raw.startswith("&") else float(pm4_raw)
             else:
                 pm4 = 0
 
             if len(pm5_raw) > 0:
-                pm5 = self.dataframe.parameter[pm5_raw[1:]] if pm5_raw.startswith("&") else float(pm5_raw)
+                pm5 = self.dataframe.parameter[pm5_raw[1:]].value if pm5_raw.startswith("&") else float(pm5_raw)
             else:
                 pm5 = 0
 
             if len(pm6_raw) > 0:
-                pm6 = self.dataframe.parameter[pm6_raw[1:]] if pm6_raw.startswith("&") else float(pm6_raw)
+                pm6 = self.dataframe.parameter[pm6_raw[1:]].value if pm6_raw.startswith("&") else float(pm6_raw)
             else:
                 pm6 = 0
 
             if len(pm7_raw) > 0:
-                pm7 = self.dataframe.parameter[pm7_raw[1:]] if pm7_raw.startswith("&") else float(pm7_raw)
+                pm7 = self.dataframe.parameter[pm7_raw[1:]].value if pm7_raw.startswith("&") else float(pm7_raw)
             else:
                 pm7 = 0
 
             if len(pm8_raw) > 0:
-                pm8 = self.dataframe.parameter[pm8_raw[1:]] if pm8_raw.startswith("&") else float(pm8_raw)
+                pm8 = self.dataframe.parameter[pm8_raw[1:]].value if pm8_raw.startswith("&") else float(pm8_raw)
             else:
                 pm8 = 0
 
             if len(pm9_raw) > 0:
-                pm9 = self.dataframe.parameter[pm9_raw[1:]] if pm9_raw.startswith("&") else float(pm9_raw)
+                pm9 = self.dataframe.parameter[pm9_raw[1:]].value if pm9_raw.startswith("&") else float(pm9_raw)
             else:
                 pm9 = 0
 
             if len(pm10_raw) > 0:
-                pm10 = self.dataframe.parameter[pm10_raw[1:]] if pm10_raw.startswith("&") else float(pm10_raw)
+                pm10 = self.dataframe.parameter[pm10_raw[1:]].value if pm10_raw.startswith("&") else float(pm10_raw)
             else:
                 pm10 = 0
 

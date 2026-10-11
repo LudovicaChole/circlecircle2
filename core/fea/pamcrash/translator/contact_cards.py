@@ -8,6 +8,8 @@ class ContactCards(Translator):
     def translate(self, version):
         df = self.dataframe
         source = df.contact_automatic_surface_to_surface_id if self.contact_type == 33 else df.contact_automatic_single_surface_id
+        if self.contact_type == 43:
+            source = df.storge.get('contact_single_edge_id', {})
         # Allocate type-43 IDs above every existing source contact ID.
         used = set(df.contact_automatic_surface_to_surface_id) | set(df.contact_automatic_single_surface_id) | set(df.storge.get('contact_single_edge_id',{}))
         next_id = max(used, default=0) + 1
@@ -22,7 +24,7 @@ class ContactCards(Translator):
             lines += [f'$ Source contact {cid}; PAM layout based on supplied examples, 2023 manual not verified.\n',
                       'CNTAC / '+field(target)+field(self.contact_type)+'\n',f'NAME {obj.heading}\n',
                       '$#    T1SL      T2SL     ISENS     HcontITPRT\n',
-                      ''.join(field(v,10) for v in (obj.bt,obj.dt,0,0.1))+field(2,5)+'\n',
+                      ''.join(field(v,10) for v in (obj.bt,obj.dt,0,getattr(obj, 'contact_thickness', 0.1) or 0.1))+field(2,5)+'\n',
                       '$#IPC    SLFACM     FSVNL\n',field(0,5)+field(0.0,10)+field(0.0,10)+'\n',
                       '$#FRITYP       VALUE     XDMP1\n','CONST     '+field(coefficient,10)+field(0.0,10)+'\n']
             if self.contact_type == 43:

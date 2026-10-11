@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.set_node_list import SetNodeList
+from core.fea.model.lsdyna.set_node_list import SetNodeList
 
 
 class SetNodeListParser(Parser):
@@ -8,7 +8,7 @@ class SetNodeListParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
         self.current_set_list_id = None
@@ -63,7 +63,7 @@ class SetNodeListParser(Parser):
             return
 
         if self.line_number != 0:
-            data_list = line_raw.split()
+            data_list = line_raw.split('$', 1)[0].replace(',', ' ').split()
 
             current_set_list_object = self.dataframe.set_node_list[self.current_set_list_id]
 

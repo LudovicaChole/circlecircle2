@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.contact_tied_nodes_to_surface_offset_id import ContactTiedNodesToSurfaceOffsetID
+from core.fea.model.lsdyna.contact_tied_nodes_to_surface_offset_id import ContactTiedNodesToSurfaceOffsetID
 
 
 class ContactTiedNodesToSurfaceOffsetIDParser(Parser):
@@ -8,7 +8,7 @@ class ContactTiedNodesToSurfaceOffsetIDParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.set_node_list import SetNodeList
+from core.fea.model.lsdyna.set_node_list import SetNodeList
 
 
 class SetSolidListTitleParser(Parser):
@@ -8,7 +8,7 @@ class SetSolidListTitleParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
         self.current_set_list_id = None

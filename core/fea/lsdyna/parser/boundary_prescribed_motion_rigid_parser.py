@@ -1,12 +1,12 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.boundary_prescribed_motion_rigid import BoundaryPrescribedMotionRigid
+from core.fea.model.lsdyna.boundary_prescribed_motion_rigid import BoundaryPrescribedMotionRigid
 from .card_fields import fields, number
 
 
 class BoundaryPrescribedMotionRigidParser(Parser):
     def __init__(self):
         super().__init__()
-        self.version = {"12.0": self._read, "13.0": self._read}
+        self.version = {"12.0": self._read, "13.0": self._read, "16.0": self._read}
 
     def _read(self, line_raw):
         if not line_raw.strip():

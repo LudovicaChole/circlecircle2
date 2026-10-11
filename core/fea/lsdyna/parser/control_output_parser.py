@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.control_output import ControlOutput
+from core.fea.model.lsdyna.control_output import ControlOutput
 
 
 class ControlOutputParser(Parser):
@@ -8,7 +8,7 @@ class ControlOutputParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
@@ -55,83 +55,83 @@ class ControlOutputParser(Parser):
             eocs_raw = line_raw[70:80].strip()
 
             if len(npopt_raw) > 0:
-                npopt = self.dataframe.parameter[npopt_raw[1:]] if npopt_raw.startswith("&") else int(npopt_raw)
+                npopt = self.dataframe.parameter[npopt_raw[1:]].value if npopt_raw.startswith("&") else int(npopt_raw)
             else:
                 npopt = 0
 
             if len(neecho_raw) > 0:
-                neecho = self.dataframe.parameter[neecho_raw[1:]] if neecho_raw.startswith("&") else int(neecho_raw)
+                neecho = self.dataframe.parameter[neecho_raw[1:]].value if neecho_raw.startswith("&") else int(neecho_raw)
             else:
                 neecho = 0
 
             if len(nrefup_raw) > 0:
-                nrefup = self.dataframe.parameter[nrefup_raw[1:]] if nrefup_raw.startswith("&") else int(nrefup_raw)
+                nrefup = self.dataframe.parameter[nrefup_raw[1:]].value if nrefup_raw.startswith("&") else int(nrefup_raw)
             else:
                 nrefup = 0
 
             if len(iaccop_raw) > 0:
-                iaccop = self.dataframe.parameter[iaccop_raw[1:]] if iaccop_raw.startswith("&") else int(iaccop_raw)
+                iaccop = self.dataframe.parameter[iaccop_raw[1:]].value if iaccop_raw.startswith("&") else int(iaccop_raw)
             else:
                 iaccop = 0
 
             if len(opifs_raw) > 0:
-                opifs = self.dataframe.parameter[opifs_raw[1:]] if opifs_raw.startswith("&") else float(opifs_raw)
+                opifs = self.dataframe.parameter[opifs_raw[1:]].value if opifs_raw.startswith("&") else float(opifs_raw)
             else:
                 opifs = 0
 
             if len(ipnint_raw) > 0:
-                ipnint = self.dataframe.parameter[ipnint_raw[1:]] if ipnint_raw.startswith("&") else int(ipnint_raw)
+                ipnint = self.dataframe.parameter[ipnint_raw[1:]].value if ipnint_raw.startswith("&") else int(ipnint_raw)
             else:
                 ipnint = 0
 
             if len(ikedit_raw) > 0:
-                ikedit = self.dataframe.parameter[ikedit_raw[1:]] if ikedit_raw.startswith("&") else int(ikedit_raw)
+                ikedit = self.dataframe.parameter[ikedit_raw[1:]].value if ikedit_raw.startswith("&") else int(ikedit_raw)
             else:
                 ikedit = 0
 
             if len(iflush_raw) > 0:
-                iflush = self.dataframe.parameter[iflush_raw[1:]] if iflush_raw.startswith("&") else int(iflush_raw)
+                iflush = self.dataframe.parameter[iflush_raw[1:]].value if iflush_raw.startswith("&") else int(iflush_raw)
             else:
                 iflush = 0
 
             if len(iprtf_raw) > 0:
-                iprtf = self.dataframe.parameter[iprtf_raw[1:]] if iprtf_raw.startswith("&") else int(iprtf_raw)
+                iprtf = self.dataframe.parameter[iprtf_raw[1:]].value if iprtf_raw.startswith("&") else int(iprtf_raw)
             else:
                 iprtf = 0
 
             if len(ierode_raw) > 0:
-                ierode = self.dataframe.parameter[ierode_raw[1:]] if ierode_raw.startswith("&") else int(ierode_raw)
+                ierode = self.dataframe.parameter[ierode_raw[1:]].value if ierode_raw.startswith("&") else int(ierode_raw)
             else:
                 ierode = 0
 
             if len(tet10s8_raw) > 0:
-                tet10s8 = self.dataframe.parameter[tet10s8_raw[1:]] if tet10s8_raw.startswith("&") else int(tet10s8_raw)
+                tet10s8 = self.dataframe.parameter[tet10s8_raw[1:]].value if tet10s8_raw.startswith("&") else int(tet10s8_raw)
             else:
                 tet10s8 = 0
 
             if len(msgmax_raw) > 0:
-                msgmax = self.dataframe.parameter[msgmax_raw[1:]] if msgmax_raw.startswith("&") else int(msgmax_raw)
+                msgmax = self.dataframe.parameter[msgmax_raw[1:]].value if msgmax_raw.startswith("&") else int(msgmax_raw)
             else:
                 msgmax = 0
 
             if len(ipcurv_raw) > 0:
-                ipcurv = self.dataframe.parameter[ipcurv_raw[1:]] if ipcurv_raw.startswith("&") else int(ipcurv_raw)
+                ipcurv = self.dataframe.parameter[ipcurv_raw[1:]].value if ipcurv_raw.startswith("&") else int(ipcurv_raw)
             else:
                 ipcurv = 0
 
             if len(gmdt_raw) > 0:
-                gmdt = self.dataframe.parameter[gmdt_raw[1:]] if gmdt_raw.startswith("&") else float(gmdt_raw)
+                gmdt = self.dataframe.parameter[gmdt_raw[1:]].value if gmdt_raw.startswith("&") else float(gmdt_raw)
             else:
                 gmdt = 0
 
             if len(ip1dblt_raw) > 0:
-                ip1dblt = self.dataframe.parameter[ip1dblt_raw[1:]] if ip1dblt_raw.startswith("&") else float(
+                ip1dblt = self.dataframe.parameter[ip1dblt_raw[1:]].value if ip1dblt_raw.startswith("&") else float(
                     ip1dblt_raw)
             else:
                 ip1dblt = 0
 
             if len(eocs_raw) > 0:
-                eocs = self.dataframe.parameter[eocs_raw[1:]] if eocs_raw.startswith("&") else float(eocs_raw)
+                eocs = self.dataframe.parameter[eocs_raw[1:]].value if eocs_raw.startswith("&") else float(eocs_raw)
             else:
                 eocs = 0
 

@@ -6,7 +6,7 @@ class ShellSectionTranslator(Translator):
         super().__init__()
 
         self.version = {
-            "6.14": self._6p14,
+            "6.14": self._6p14, "2024": self._6p14,
         }
 
     def translate(self, version):
@@ -28,6 +28,8 @@ class ShellSectionTranslator(Translator):
             output_storge = self.dataframe.output_storge.setdefault("*SHELL_SECTION", [])
 
             for pid, part in part_dict.items():
+                if not self.dataframe.storge_part_element.get(pid):
+                    continue
                 mid = part_dict[pid].mid
                 material_name = material_dict[mid].name
                 secid = part_dict[pid].secid
@@ -41,12 +43,21 @@ class ShellSectionTranslator(Translator):
 
                     if property_name not in temp_section_name:
 
+                        t1 = section_shell.t1
+                        nip = section_shell.nip or 2
+                        if float(nip).is_integer() and 2 <= nip <= 10:
+                            integration = ', SECTION INTEGRATION=GAUSS'
+                            nip = int(nip)
+                        else:
+                            from core.fea.conversion_notes import unconverted
+                            unconverted(
+                                f'Shell section {secid}: NIP={section_shell.nip:g} has no mapped '
+                                'Abaqus integration rule; using 5-point Simpson integration', section_shell)
+                            integration, nip = '', 5
+
                         output_storge.append(f"*SHELL SECTION, "
                                              f"ELSET={property_name}, "
-                                             f"MATERIAL={material_name}\n")
-
-                        t1 = section_shell.t1
-                        nip = section_shell.nip
+                                             f"MATERIAL={material_name}{integration}\n")
 
                         output_storge.append(f"{t1:<10},{nip:<10}\n")
 

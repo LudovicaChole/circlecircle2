@@ -1,5 +1,6 @@
+from core.fea.lsdyna.parser.card_fields import fields, number
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.section_solid import SectionSolid
+from core.fea.model.lsdyna.section_solid import SectionSolid
 
 
 class SectionSolidParser(Parser):
@@ -8,15 +9,15 @@ class SectionSolidParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):
-        secid_raw = line_raw[0:10].strip()
-        elform_raw = line_raw[10:20].strip()
+        secid_raw = fields(line_raw)[0]
+        elform_raw = fields(line_raw)[1]
 
-        secid = self.dataframe.parameter[secid_raw[1:]].value if secid_raw.startswith("&") else int(secid_raw)
-        elform = self.dataframe.parameter[elform_raw[1:]].value if elform_raw.startswith("&") else int(elform_raw)
+        secid = number(secid_raw, self.dataframe, integer=True)
+        elform = number(elform_raw, self.dataframe, integer=True)
 
         self.dataframe.section_solid[secid] = SectionSolid(uid=secid,
                                                            elform=elform)

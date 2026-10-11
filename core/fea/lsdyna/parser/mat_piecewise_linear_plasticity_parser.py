@@ -1,14 +1,13 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.mat_piecewise_linear_plasticity_log_interpolation import MatPiecewiseLinearPlasticityLogInterpolation
+from core.fea.model.lsdyna.mat_piecewise_linear_plasticity_log_interpolation import MatPiecewiseLinearPlasticityLogInterpolation
 from .card_fields import fields, number
-from core.fea.lsdyna.material_mapper import material_mapper
 
 
 class MatPiecewiseLinearPlasticityParser(Parser):
     def __init__(self, title=False):
         super().__init__()
         self.title = title
-        self.version = {"12.0": self._read, "13.0": self._read}
+        self.version = {"12.0": self._read, "13.0": self._read, "16.0": self._read}
 
     def _read(self, line_raw):
         index = self.line_number - int(self.title)
@@ -34,4 +33,4 @@ class MatPiecewiseLinearPlasticityParser(Parser):
             for name, value in data.items():
                 setattr(obj, name, value)
             if index == 1:
-                obj.map_tag = material_mapper.map_material(lcss_id=obj.lcss)
+                obj.map_tag = None

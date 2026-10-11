@@ -1,5 +1,5 @@
 from core.fea.parser import Parser
-from core.fea.lsdyna.keywords.database_cross_section_plane_id import DatabaseCrossSectionPlaneID
+from core.fea.model.lsdyna.database_cross_section_plane_id import DatabaseCrossSectionPlaneID
 
 
 class DatabaseCrossSectionPlaneIDParser(Parser):
@@ -8,7 +8,7 @@ class DatabaseCrossSectionPlaneIDParser(Parser):
 
         self.version = {
             "12.0": self._12p0,
-            "13.0": self._12p0,
+            "13.0": self._12p0, "16.0": self._12p0,
         }
 
     def _12p0(self, line_raw):

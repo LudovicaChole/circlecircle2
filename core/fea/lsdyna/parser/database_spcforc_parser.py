@@ -7,7 +7,7 @@ class DatabaseSpcforcParser(Parser):
     """LS-DYNA R12 keyword manual: *DATABASE_SPCFORC."""
     def __init__(self):
         super().__init__()
-        self.version = {"12.0": self._read, "13.0": self._read}
+        self.version = {"12.0": self._read, "13.0": self._read, "16.0": self._read}
 
     def _read(self, line_raw):
         spec = [('dt', 0), ('binary', 0), ('lcur', 0), ('ioopt', 0)]

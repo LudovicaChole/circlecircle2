@@ -1,3 +1,26 @@
+from core.fea.lsdyna.parser.em_control_parser import EmControlParser
+from core.fea.lsdyna.parser.em_control_timestep_parser import EmControlTimestepParser
+from core.fea.lsdyna.parser.em_circuit_source_parser import EmCircuitSourceParser
+from core.fea.lsdyna.parser.em_circuit_rogo_parser import EmCircuitRogoParser
+from core.fea.lsdyna.parser.em_database_pointout_parser import EmDatabasePointoutParser
+from core.fea.lsdyna.parser.em_eos_permeability_parser import EmEosPermeabilityParser
+from core.fea.lsdyna.parser.em_external_field_parser import EmExternalFieldParser
+from core.fea.lsdyna.parser.em_mat_001_parser import EmMat001Parser
+from core.fea.lsdyna.parser.em_mat_002_parser import EmMat002Parser
+from core.fea.lsdyna.parser.em_output_parser import EmOutputParser
+from core.fea.lsdyna.parser.em_point_set_parser import EmPointSetParser
+from core.fea.lsdyna.parser.em_solver_bem_parser import EmSolverBemParser
+from core.fea.lsdyna.parser.em_solver_bemmat_parser import EmSolverBemmatParser
+from core.fea.lsdyna.parser.em_solver_fem_parser import EmSolverFemParser
+from core.fea.lsdyna.parser.em_solver_fembem_parser import EmSolverFembemParser
+from core.fea.lsdyna.parser.em_solver_fembem_monolithic_parser import EmSolverFembemMonolithicParser
+from contextlib import nullcontext
+from core.fea.include_reader import load_deck
+from core.fea.lsdyna.parser.boundary_spc_node_parser import BoundarySpcNodeParser
+from core.fea.lsdyna.parser.initial_velocity_node_parser import InitialVelocityNodeParser
+from core.fea.lsdyna.parser.initial_velocity_parser import InitialVelocityParser
+from utilities.source_location import source_location, parse_source
+from core.fea.validation import FeaInputError, validate_card, finish_keyword
 import re
 from core.fea.lsdyna.parser.set_solid_list_parser import SetSolidListParser
 from core.fea.lsdyna.parser.set_solid_list_title_parser import SetSolidListTitleParser
@@ -16,6 +39,7 @@ from core.fea.lsdyna.parser.contact_single_edge_id_parser import ContactSingleEd
 from utilities.logger import logger
 from core.fea.lsdyna.parser.set_segment_parser import SetSegmentParser
 from core.fea.solver import Solver
+from core.fea.material_cards import MATERIAL_KEYWORDS
 from core.fea.lsdyna.parser.keyword_parser import KeyWordParser
 from core.fea.lsdyna.parser.parameter_parser import ParameterParser
 from core.fea.lsdyna.parser.node_parser import NodeParser
@@ -115,6 +139,22 @@ class LsDyna(Solver):
         }
 
         self.parse_keywords_1 = {
+            "*EM_CONTROL": EmControlParser(),
+            "*EM_CONTROL_TIMESTEP": EmControlTimestepParser(),
+            "*EM_CIRCUIT_SOURCE": EmCircuitSourceParser(),
+            "*EM_CIRCUIT_ROGO": EmCircuitRogoParser(),
+            "*EM_DATABASE_POINTOUT": EmDatabasePointoutParser(),
+            "*EM_EOS_PERMEABILITY": EmEosPermeabilityParser(),
+            "*EM_EXTERNAL_FIELD": EmExternalFieldParser(),
+            "*EM_MAT_001": EmMat001Parser(),
+            "*EM_MAT_002": EmMat002Parser(),
+            "*EM_OUTPUT": EmOutputParser(),
+            "*EM_POINT_SET": EmPointSetParser(),
+            "*EM_SOLVER_BEM": EmSolverBemParser(),
+            "*EM_SOLVER_BEMMAT": EmSolverBemmatParser(),
+            "*EM_SOLVER_FEM": EmSolverFemParser(),
+            "*EM_SOLVER_FEMBEM": EmSolverFembemParser(),
+            "*EM_SOLVER_FEMBEM_MONOLITHIC": EmSolverFembemMonolithicParser(),
             "*SET_SOLID_LIST": SetSolidListParser(),
             "*SET_SOLID_LIST_TITLE": SetSolidListTitleParser(),
             "*KEYWORD": KeyWordParser(),
@@ -182,6 +222,9 @@ class LsDyna(Solver):
         }
 
         self.parse_keywords_2 = {
+            "*BOUNDARY_SPC_NODE": BoundarySpcNodeParser(),
+            "*INITIAL_VELOCITY_NODE": InitialVelocityNodeParser(),
+            "*INITIAL_VELOCITY": InitialVelocityParser(),
             "*ELEMENT_SHELL": ElementShellParser(),
             "*ELEMENT_SOLID": ElementSolidParser(),
             "*PART": PartParser(),
@@ -226,6 +269,80 @@ class LsDyna(Solver):
         })
         self.parse_keywords_1["*SET_PART_LIST_COLLECT_TITLE"] = self.parse_keywords_2.pop("*SET_PART_LIST_COLLECT_TITLE")
         self.translate_keywords = {}
+        from core.fea.lsdyna.parser.boundary_convection_set_parser import BoundaryConvectionSetParser
+        from core.fea.lsdyna.parser.boundary_convection_segment_parser import BoundaryConvectionSegmentParser
+        self.parse_keywords_1['*BOUNDARY_CONVECTION_SET'] = BoundaryConvectionSetParser()
+        self.parse_keywords_1['*BOUNDARY_CONVECTION_SEGMENT'] = BoundaryConvectionSegmentParser()
+        from core.fea.lsdyna.parser.mat_thermal_isotropic_title_parser import MatThermalIsotropicTitleParser
+        self.parse_keywords_1['*MAT_THERMAL_ISOTROPIC_TITLE'] = MatThermalIsotropicTitleParser()
+        from core.fea.lsdyna.parser.icfd_control_time_parser import IcfdControlTimeParser
+        self.parse_keywords_1['*ICFD_CONTROL_TIME'] = IcfdControlTimeParser()
+        from core.fea.lsdyna.parser.icfd_mat_parser import IcfdMatParser
+        self.parse_keywords_1['*ICFD_MAT'] = IcfdMatParser()
+        from core.fea.lsdyna.parser.icfd_part_parser import IcfdPartParser
+        self.parse_keywords_1['*ICFD_PART'] = IcfdPartParser()
+        from core.fea.lsdyna.parser.icfd_part_vol_parser import IcfdPartVolParser
+        self.parse_keywords_1['*ICFD_PART_VOL'] = IcfdPartVolParser()
+        from core.fea.lsdyna.parser.icfd_section_parser import IcfdSectionParser
+        self.parse_keywords_1['*ICFD_SECTION'] = IcfdSectionParser()
+        from core.fea.lsdyna.parser.mesh_volume_element_parser import MeshVolumeElementParser
+        self.parse_keywords_1['*MESH_VOLUME_ELEMENT'] = MeshVolumeElementParser()
+        from core.fea.lsdyna.parser.mesh_surface_element_parser import MeshSurfaceElementParser
+        self.parse_keywords_1['*MESH_SURFACE_ELEMENT'] = MeshSurfaceElementParser()
+        from core.fea.lsdyna.parser.mesh_volume_node_parser import MeshVolumeNodeParser
+        self.parse_keywords_1['*MESH_VOLUME_NODE'] = MeshVolumeNodeParser()
+        from core.fea.lsdyna.parser.mesh_node_parser import MeshNodeParser
+        self.parse_keywords_1['*MESH_NODE'] = MeshNodeParser()
+        from core.fea.lsdyna.parser.control_implicit_eigenvalue_parser import ControlImplicitEigenvalueParser
+        self.parse_keywords_1['*CONTROL_IMPLICIT_EIGENVALUE'] = ControlImplicitEigenvalueParser()
+        from core.fea.lsdyna.parser.mat_thermal_isotropic_parser import MatThermalIsotropicParser
+        from core.fea.lsdyna.parser.control_thermal_solver_parser import ControlThermalSolverParser
+        from core.fea.lsdyna.parser.control_thermal_timestep_parser import ControlThermalTimestepParser
+        from core.fea.lsdyna.parser.boundary_temperature_node_parser import BoundaryTemperatureNodeParser
+        from core.fea.lsdyna.parser.boundary_temperature_set_parser import BoundaryTemperatureSetParser
+        from core.fea.lsdyna.parser.initial_temperature_node_parser import InitialTemperatureNodeParser
+        from core.fea.lsdyna.parser.initial_temperature_set_parser import InitialTemperatureSetParser
+        from core.fea.lsdyna.parser.boundary_flux_set_parser import BoundaryFluxSetParser
+        from core.fea.lsdyna.parser.boundary_flux_segment_parser import BoundaryFluxSegmentParser
+        self.parse_keywords_1.update({
+            '*MAT_THERMAL_ISOTROPIC': MatThermalIsotropicParser(),
+            '*CONTROL_THERMAL_SOLVER': ControlThermalSolverParser(),
+            '*CONTROL_THERMAL_TIMESTEP': ControlThermalTimestepParser(),
+            '*BOUNDARY_TEMPERATURE_NODE': BoundaryTemperatureNodeParser(),
+            '*BOUNDARY_TEMPERATURE_SET': BoundaryTemperatureSetParser(),
+            '*INITIAL_TEMPERATURE_NODE': InitialTemperatureNodeParser(),
+            '*INITIAL_TEMPERATURE_SET': InitialTemperatureSetParser(),
+            '*BOUNDARY_FLUX_SET': BoundaryFluxSetParser(),
+            '*BOUNDARY_FLUX_SEGMENT': BoundaryFluxSegmentParser(),
+            '*INITIAL_TEMPERATURE': InitialTemperatureNodeParser(),
+        })
+        from core.fea.lsdyna.parser.section_beam_parser import SectionBeamParser
+        from core.fea.lsdyna.parser.section_beam_title_parser import SectionBeamTitleParser
+        from core.fea.lsdyna.parser.element_beam_parser import ElementBeamParser
+        from core.fea.lsdyna.parser.element_beam_orientation_parser import ElementBeamOrientationParser
+        self.parse_keywords_1.update({'*SECTION_BEAM': SectionBeamParser(),
+                                     '*SECTION_BEAM_TITLE': SectionBeamTitleParser()})
+        self.parse_keywords_2.update({'*ELEMENT_BEAM': ElementBeamParser(),
+                                     '*ELEMENT_BEAM_ORIENTATION': ElementBeamOrientationParser()})
+        from core.fea.lsdyna.parser.load_node_point_parser import LoadNodePointParser
+        from core.fea.lsdyna.parser.load_node_set_parser import LoadNodeSetParser
+        from core.fea.lsdyna.parser.boundary_spc_set_parser import BoundarySpcSetParser
+        from core.fea.lsdyna.parser.boundary_spc_set_id_parser import BoundarySpcSetIdParser
+        from core.fea.lsdyna.parser.boundary_spc_node_id_parser import BoundarySpcNodeIdParser
+        self.parse_keywords_2.update({'*LOAD_NODE_POINT': LoadNodePointParser(),
+                                     '*LOAD_NODE': LoadNodePointParser(),
+                                     '*LOAD_NODE_SET': LoadNodeSetParser(),
+                                     '*BOUNDARY_SPC_SET': BoundarySpcSetParser(),
+                                     '*BOUNDARY_SPC_SET_ID': BoundarySpcSetIdParser()})
+        self.parse_keywords_2['*BOUNDARY_SPC_NODE_ID'] = BoundarySpcNodeIdParser()
+        self.parse_keywords_1['*SET_NODE'] = SetNodeListParser()
+        self.parse_keywords_1['*SET_NODE_TITLE'] = SetNodeListTitleParser()
+        from core.fea.lsdyna.parser.boundary_prescribed_motion_node_parser import BoundaryPrescribedMotionNodeParser
+        self.parse_keywords_2['*BOUNDARY_PRESCRIBED_MOTION_NODE'] = BoundaryPrescribedMotionNodeParser()
+        from core.fea.lsdyna.parser.joint_parser import RevoluteJointParser, JointStiffnessParser
+        self.parse_keywords_2.update({'*CONSTRAINED_JOINT_REVOLUTE_ID': RevoluteJointParser(),
+                                      '*CONSTRAINED_JOINT_REVOLUTE': RevoluteJointParser(False),
+                                      '*CONSTRAINED_JOINT_STIFFNESS_FLEXION-TORSION': JointStiffnessParser()})
         self.not_support_keywords = set()
 
         self.current_parser = None
@@ -240,10 +357,14 @@ class LsDyna(Solver):
         parse_keywords = kwargs.get("parse_keywords", args[2] if len(args) > 2 else None)
 
         if file_path:
-            with open(file=file_path, mode="r", encoding="utf-8", errors="ignore") as f:
+            deck = kwargs.get("deck") or load_deck(file_path, "lsdyna")
+            with nullcontext(deck.selected_lines('lsdyna', parse_keywords.__contains__)) as f:
                 try:
                     set_label = None
-                    for line in f:
+                    active_keyword, active_count, active_context = None, 0, ''
+                    self.current_parser = None
+                    for record in f:
+                        source_path, source_line, line = record.path, record.number, record.text
 
                         if line.startswith('$'):
                             match = re.match(r'^\$HMNAME\s+SETS\s+(\d+)(.*)', line)
@@ -254,12 +375,17 @@ class LsDyna(Solver):
                             continue
 
                         if line.startswith("*"):
+                            if active_keyword:
+                                finish_keyword(active_keyword, active_count, active_context, self.current_parser)
+                            active_keyword, active_count = None, 0
                             set_label = None
                             dyna_keyword = line.split()[0].strip().upper()
 
                             if dyna_keyword in parse_keywords:
                                 self.current_parser = parse_keywords[dyna_keyword]
                                 self.current_parser.reset()
+                                active_keyword = dyna_keyword
+                                active_context = source_location(source_path, source_line)
                                 continue
                             else:
                                 if dyna_keyword in self.parse_keywords_initial:
@@ -275,7 +401,8 @@ class LsDyna(Solver):
                                     continue
 
                                 else:
-                                    self.not_support_keywords.add(dyna_keyword)
+                                    if dyna_keyword.removesuffix('_TITLE') not in MATERIAL_KEYWORDS:
+                                        self.not_support_keywords.add(source_location(source_path, source_line, dyna_keyword))
                                     self.current_parser = None
                                     continue
 
@@ -295,15 +422,26 @@ class LsDyna(Solver):
 
                         else:
                             if self.current_parser is not None:
-                                self.current_parser.parse(line_raw=line, version=version)
+                                if not line.strip() and self.current_parser.line_number == 0 and dyna_keyword in ('*NODE', '*ELEMENT_SHELL', '*ELEMENT_SOLID'):
+                                    continue
+                                active_count += 1
+                                self.current_parser.source_context = source_location(source_path, source_line, dyna_keyword)
+                                validate_card(dyna_keyword, line, self.current_parser)
+                                parse_source(self.current_parser, line, version, source_path, source_line, dyna_keyword)
                                 if set_label and dyna_keyword.startswith('*SET_'):
                                     family = dyna_keyword.split('_')[1].lower()
                                     store = self.current_parser.dataframe.storge.get(f'set_{family}_list',{})
                                     if set_label[0] in store and set_label[1]:
                                         store[set_label[0]].name = set_label[1]
 
+                    if active_keyword:
+                        finish_keyword(active_keyword, active_count, active_context, self.current_parser)
+
                 except Exception as e:
-                    raise e
+                    keyword = locals().get('dyna_keyword', '<header>')
+                    if isinstance(e, FeaInputError) and ": LINE - " in str(e):
+                        raise
+                    raise FeaInputError(f'{source_location(source_path, locals().get("source_line"), keyword)}: {e}') from e
 
         else:
             self.logger.error(f"LS-DYNA PARSER ERROR: file_path cannot be empty\n")
@@ -312,12 +450,49 @@ class LsDyna(Solver):
         file_path = kwargs.get("file_path", args[0] if len(args) > 0 else None)
         version = kwargs.get("version", args[1] if len(args) > 1 else None)
 
-        self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_initial)
-        self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_1)
-        self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_2)
+        deck = load_deck(file_path, "lsdyna")
+        self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_initial, deck=deck)
+        self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_1, deck=deck)
+        self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_2, deck=deck)
+
+        from pathlib import Path
+        from core.fea.material_cards import register_materials
+        material_text, material_sources = deck.material_input('lsdyna')
+        register_materials(material_text, 'lsdyna', file_path=file_path, source_map=material_sources)
+
+        from core.fea.dataframe import dataframe
+        from core.fea.conversion_notes import unconverted
+        for record in dataframe.storge['electromagnetic'].values():
+            unconverted('Electromagnetic card parsed; Abaqus/PAM electromagnetic mapping is not implemented', record)
 
         for not_support_keyword in self.not_support_keywords:
-            self.logger.warning(f"Ls-Dyna not support keywords: {not_support_keyword}")
+            from core.fea.conversion_notes import unconverted
+            unconverted("LS-DYNA keyword is not converted", not_support_keyword)
 
-    def translate(self, file_path):
-        print(f"lsdyna translate")
+    def translate(self, file_path, version, material_mapping=False, material_mapping_file_path=None):
+        from core.fea.dataframe import dataframe
+        from core.fea.lsdyna.translator.node_translator import NodeTranslator
+        from core.fea.lsdyna.translator.element_shell_translator import ElementShellTranslator
+        from core.fea.lsdyna.translator.element_solid_translator import ElementSolidTranslator
+        from core.fea.lsdyna.translator.part_translator import PartTranslator
+        from core.fea.lsdyna.translator.section_shell_translator import SectionShellTranslator
+        from core.fea.lsdyna.translator.section_solid_translator import SectionSolidTranslator
+        from core.fea.lsdyna.translator.set_node_list_translator import SetNodeListTranslator
+        from core.fea.lsdyna.translator.material_translator import MaterialTranslator
+        from core.fea.lsdyna.translator.boundary_spc_node_translator import BoundarySpcNodeTranslator
+        from core.fea.lsdyna.translator.initial_velocity_node_translator import InitialVelocityNodeTranslator
+        from core.fea.lsdyna.translator.control_termination_translator import ControlTerminationTranslator
+        from core.fea.lsdyna.translator.database_cross_section_set_translator import DatabaseCrossSectionSetTranslator
+        dataframe.output_storge['*KEYWORD'] = ['*KEYWORD\n']
+        from core.fea.lsdyna.translator.hourglass_translator import HourglassTranslator
+        HourglassTranslator().translate(version)
+        for translator in (NodeTranslator(), ElementShellTranslator(), ElementSolidTranslator(),
+                           SectionShellTranslator(), PartTranslator(), SectionSolidTranslator(), SetNodeListTranslator(),
+                           BoundarySpcNodeTranslator(), InitialVelocityNodeTranslator(), ControlTerminationTranslator(), DatabaseCrossSectionSetTranslator()):
+            translator.translate(version)
+        from core.fea.lsdyna.translator.motion_translator import MotionTranslator
+        MotionTranslator().translate(version)
+        MaterialTranslator().translate(version, material_mapping, material_mapping_file_path)
+        from core.fea.lsdyna.translator.interaction_translator import InteractionTranslator
+        InteractionTranslator().translate(version)
+        dataframe.output_storge['*END'] = ['*END\n']
